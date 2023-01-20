@@ -18,9 +18,9 @@ func Test_NewWith(t *testing.T) {
 	assert.NotNil(t, qrc)
 
 	SetDebugMode()
-	_ = debugDraw("./testdata/nw.jpeg", *qrc.mat.Copy())
+	_ = debugDraw("./testdata/nw.jpeg", *qrc.Copy())
 
-	qrc.mat.print()
+	qrc.print()
 }
 
 // Test_NewWithConfig_UnmatchedEncodeMode NewWith will panic while encMode is

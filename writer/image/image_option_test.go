@@ -1,18 +1,17 @@
 package standard
 
 import (
+	"github.com/quickqr/gqr"
 	"image/color"
 	"reflect"
 	"testing"
-
-	"github.com/yeqown/go-qrcode/v2"
 )
 
 func Test_stateRGBA(t *testing.T) {
 	oo := defaultOutputImageOption()
 
 	type args struct {
-		v qrcode.QRValue
+		v gqr.QRValue
 	}
 	tests := []struct {
 		name string
@@ -21,37 +20,37 @@ func Test_stateRGBA(t *testing.T) {
 	}{
 		{
 			name: "case 1",
-			args: args{v: qrcode.QRValue_DATA_V0},
+			args: args{v: gqr.QRValue_DATA_V0},
 			want: oo.bgColor,
 		},
 		{
 			name: "case 2",
-			args: args{v: qrcode.QRValue_INIT_V0},
+			args: args{v: gqr.QRValue_INIT_V0},
 			want: oo.bgColor,
 		},
 		{
 			name: "case 3",
-			args: args{v: qrcode.QRValue_DATA_V1},
+			args: args{v: gqr.QRValue_DATA_V1},
 			want: oo.qrColor,
 		},
 		{
 			name: "case 4",
-			args: args{v: qrcode.QRValue_FORMAT_V1},
+			args: args{v: gqr.QRValue_FORMAT_V1},
 			want: oo.qrColor,
 		},
 		{
 			name: "case 5",
-			args: args{v: qrcode.QRValue_VERSION_V1},
+			args: args{v: gqr.QRValue_VERSION_V1},
 			want: oo.qrColor,
 		},
 		{
 			name: "case 6",
-			args: args{v: qrcode.QRValue(0x0f)},
+			args: args{v: gqr.QRValue(0x0f)},
 			want: oo.qrColor,
 		},
 		{
 			name: "case 7",
-			args: args{v: qrcode.QRValue_FINDER_V1},
+			args: args{v: gqr.QRValue_FINDER_V1},
 			want: oo.qrColor,
 		},
 	}

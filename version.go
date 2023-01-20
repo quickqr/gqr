@@ -2,11 +2,9 @@ package gqr
 
 import (
 	"errors"
+	"github.com/quickqr/gqr/reedsolomon/binary"
 	"log"
 	"strconv"
-
-	// "github.com/skip2/go-qrcode/bitset"
-	"github.com/yeqown/reedsolomon/binary"
 )
 
 // ecLevel error correction level

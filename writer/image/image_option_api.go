@@ -8,7 +8,7 @@ import (
 	"image/png"
 	"os"
 
-	"github.com/yeqown/go-qrcode/writer/standard/imgkit"
+	"github.com/quickqr/gqr/writer/image/imgkit"
 )
 
 // funcOption wraps a function that modifies outputImageOptions into an

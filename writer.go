@@ -8,7 +8,7 @@ type Writer interface {
 	// terminal output stream, and etc
 	Write(mat Matrix) error
 
-	// Close the writer stream if it exists after QRCode.Save() is called.
+	// Close the writer stream if it exists after gqr.Save() is called.
 	Close() error
 }
 

@@ -10,14 +10,14 @@ import (
 )
 
 // New generate a QRCode struct to create
-func New(text string) (*QRCode, error) {
+func New(text string) (*Matrix, error) {
 	dst := DefaultEncodingOption()
 	return build(text, dst)
 }
 
 // NewWith generate a QRCode struct with
 // specified `ver`(QR version) and `ecLv`(Error Correction level)
-func NewWith(text string, opts ...EncodeOption) (*QRCode, error) {
+func NewWith(text string, opts ...EncodeOption) (*Matrix, error) {
 	dst := DefaultEncodingOption()
 	for _, opt := range opts {
 		opt.apply(dst)
@@ -26,7 +26,7 @@ func NewWith(text string, opts ...EncodeOption) (*QRCode, error) {
 	return build(text, dst)
 }
 
-func build(text string, option *encodingOption) (*QRCode, error) {
+func build(text string, option *encodingOption) (*Matrix, error) {
 	qrc := &QRCode{
 		sourceText:     text,
 		sourceRawBytes: []byte(text),
@@ -44,7 +44,7 @@ func build(text string, option *encodingOption) (*QRCode, error) {
 
 	qrc.masking()
 
-	return qrc, nil
+	return qrc.mat, nil
 }
 
 // QRCode contains fields to generate QRCode matrix, outputImageOptions to Draw image,
@@ -60,20 +60,6 @@ type QRCode struct {
 	encodingOption *encodingOption
 	encoder        *encoder // encoder ptr to call its methods ~
 	v              version  // indicate the QR version to encode.
-}
-
-func (q *QRCode) Save(w Writer) error {
-	if w == nil {
-		w = nonWriter{}
-	}
-
-	defer func() {
-		if err := w.Close(); err != nil {
-			log.Printf("[WARNNING] [go-qrcode] close writer failed: %v\n", err)
-		}
-	}()
-
-	return w.Write(*q.mat)
 }
 
 func (q *QRCode) Dimension() int {

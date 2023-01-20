@@ -21,7 +21,7 @@ func Benchmark_rule3(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = rule3(qrc.mat)
+		_ = rule3(qrc)
 	}
 }
 
@@ -41,7 +41,7 @@ func Benchmark_rule1(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = rule1(qrc.mat)
+		_ = rule1(qrc)
 	}
 }
 

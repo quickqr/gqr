@@ -2,20 +2,19 @@ package standard
 
 import (
 	"fmt"
+	"github.com/quickqr/gqr"
+	"github.com/quickqr/gqr/writer/image/imgkit"
 	"image"
 	"image/color"
 	"io"
 	"log"
 	"os"
 
-	"github.com/yeqown/go-qrcode/v2"
-	"github.com/yeqown/go-qrcode/writer/standard/imgkit"
-
 	"github.com/fogleman/gg"
 	"github.com/pkg/errors"
 )
 
-var _ qrcode.Writer = (*Writer)(nil)
+var _ gqr.Writer = (*Writer)(nil)
 
 var (
 	ErrNilWriter = errors.New("nil writer")
@@ -65,7 +64,7 @@ const (
 	_defaultPadding  = 40
 )
 
-func (w Writer) Write(mat qrcode.Matrix) error {
+func (w Writer) Write(mat gqr.Matrix) error {
 	return drawTo(w.closer, mat, w.option)
 }
 
@@ -85,7 +84,7 @@ func (w Writer) Attribute(dimension int) *Attribute {
 	return w.option.preCalculateAttribute(dimension)
 }
 
-func drawTo(w io.Writer, mat qrcode.Matrix, option *outputImageOptions) (err error) {
+func drawTo(w io.Writer, mat gqr.Matrix, option *outputImageOptions) (err error) {
 	if option == nil {
 		option = defaultOutputImageOption()
 	}
@@ -106,7 +105,7 @@ func drawTo(w io.Writer, mat qrcode.Matrix, option *outputImageOptions) (err err
 
 // draw deal QRCode's matrix to be an image.Image. Notice that if anyone changed this function,
 // please also check the function outputImageOptions.preCalculateAttribute().
-func draw(mat qrcode.Matrix, opt *outputImageOptions) image.Image {
+func draw(mat gqr.Matrix, opt *outputImageOptions) image.Image {
 	top, right, bottom, left := opt.borderWidths[0], opt.borderWidths[1], opt.borderWidths[2], opt.borderWidths[3]
 	// closer as image width, h as image height
 	w := mat.Width()*opt.qrBlockWidth() + left + right
@@ -143,7 +142,7 @@ func draw(mat qrcode.Matrix, opt *outputImageOptions) image.Image {
 	}
 
 	// iterate the matrix to Draw each pixel
-	mat.Iterate(qrcode.IterDirection_ROW, func(x int, y int, v qrcode.QRValue) {
+	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
 		// Draw the block
 		ctx.x, ctx.y = float64(x*opt.qrBlockWidth()+left), float64(y*opt.qrBlockWidth()+top)
 		ctx.w, ctx.h = opt.qrBlockWidth(), opt.qrBlockWidth()
@@ -151,9 +150,9 @@ func draw(mat qrcode.Matrix, opt *outputImageOptions) image.Image {
 
 		// DONE(@yeqown): make this abstract to Shapes
 		switch typ := v.Type(); typ {
-		case qrcode.QRType_FINDER:
+		case gqr.QRType_FINDER:
 			shape.DrawFinder(ctx)
-		case qrcode.QRType_DATA:
+		case gqr.QRType_DATA:
 			if halftoneImg == nil {
 				shape.Draw(ctx)
 				return
