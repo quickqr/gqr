@@ -8,19 +8,20 @@ import (
 	"image/color"
 )
 
-// ImageExporter exports gqr.Matrix to image.Image
-type ImageExporter struct {
+// Exporter exports gqr.Matrix to image.Image
+type Exporter struct {
 	options *ImageOptions
 }
 
 // New creates new ImageExporter with default options. (see DEFAULT_IMAGE_OPTIONS)
-func New() ImageExporter {
+func New() Exporter {
 	return NewWithOptions(DEFAULT_IMAGE_OPTIONS)
 }
 
 // NewWithOptions creates ImageExporter with custom options. (see ImageOptions)
-func NewWithOptions(opt ImageOptions) ImageExporter {
-	return ImageExporter{
+func NewWithOptions(opt ImageOptions) Exporter {
+	// TODO: Not working since defautl values are not applied
+	return Exporter{
 		options: &opt,
 	}
 }
@@ -29,7 +30,7 @@ func NewWithOptions(opt ImageOptions) ImageExporter {
 // - Draw finders separately
 
 // Export QR
-func (e ImageExporter) Export(mat gqr.Matrix) image.Image {
+func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	o := e.options
 
 	dc := gg.NewContext(o.Size, o.Size)
@@ -41,13 +42,18 @@ func (e ImageExporter) Export(mat gqr.Matrix) image.Image {
 
 	actualSize := o.Size - o.BorderWidth*2
 	modWidth := float64(actualSize) / float64(mat.Width())
+
+	// Fixme: should be avaliable as boolean like "touchesNeighbours" in shape interface
+	// 1 pixel of padding to cover gaps that appear after floating point arithmetics
+	modPad := 1.0
+
 	// qrcode block draw context
 	ctx := &DrawContext{
 		Context: dc,
 		x:       0.0,
 		y:       0.0,
-		w:       modWidth,
-		h:       modWidth,
+		w:       modWidth + modPad,
+		h:       modWidth + modPad,
 		color:   color.Black,
 	}
 
@@ -66,15 +72,19 @@ func (e ImageExporter) Export(mat gqr.Matrix) image.Image {
 
 	// iterate the matrix to Draw each pixel
 	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
-		ctx.x = modWidth*float64(x) + float64(o.BorderWidth)
-		ctx.y = modWidth*float64(y) + float64(o.BorderWidth)
+		ctx.x = float64(x)*modWidth + float64(o.BorderWidth)
+		ctx.y = float64(y)*modWidth + float64(o.BorderWidth)
 		ctx.color = o.qrValueToRGBA(v)
 
 		switch typ := v.Type(); typ {
 		case gqr.QRType_FINDER:
 			// Pass finders since they're drawn separately
 			break
-		case gqr.QRType_DATA:
+		default:
+			// Fixme: add generic shapes back
+			ctx.DrawRectangle(ctx.x, ctx.y, float64(ctx.w), float64(ctx.w))
+			ctx.SetColor(ctx.color)
+			ctx.Fill()
 			// TODO: Fix halftones
 			//if halftoneImg == nil {
 			//	shape.Draw(ctx)
@@ -98,11 +108,6 @@ func (e ImageExporter) Export(mat gqr.Matrix) image.Image {
 			//		shape.Draw(ctx2)
 			//	}
 			//}
-		default:
-			// Fixme: add generic shapes back
-			ctx.DrawRectangle(ctx.x, ctx.y, float64(ctx.w), float64(ctx.h))
-			ctx.SetColor(ctx.color)
-			ctx.Fill()
 		}
 	})
 
@@ -117,11 +122,4 @@ func (e ImageExporter) Export(mat gqr.Matrix) image.Image {
 
 	return dc.Image()
 
-}
-
-// Attribute contains basic information of generated image.
-type Attribute struct {
-	// width and height of image
-	W, H   int
-	Border int
 }

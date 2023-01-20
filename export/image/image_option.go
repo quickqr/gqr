@@ -49,20 +49,6 @@ func (oo *ImageOptions) qrValueToRGBA(v gqr.QRValue) (rgba color.RGBA) {
 	return rgba
 }
 
-// preCalculateAttribute this function must reference to draw function.
-func (oo *ImageOptions) preCalculateAttribute(dimension int) *Attribute {
-	if oo == nil {
-		return nil
-	}
-
-	//top, right, bottom, left := oo.borderWidths[0], oo.borderWidths[1], oo.borderWidths[2], oo.borderWidths[3]
-	return &Attribute{
-		W:      oo.Size + oo.BorderWidth*2,
-		H:      oo.Size + oo.BorderWidth*2,
-		Border: oo.BorderWidth,
-	}
-}
-
 var (
 	color_WHITE = parseFromHex("#ffffff")
 	color_BLACK = parseFromHex("#000000")
