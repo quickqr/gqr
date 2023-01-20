@@ -1,4 +1,4 @@
-module github.com/quickqr/gqr/writer/image
+module github.com/quickqr/gqr/export/image
 
 go 1.17
 

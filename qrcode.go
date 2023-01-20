@@ -15,6 +15,8 @@ func New(text string) (*Matrix, error) {
 	return build(text, dst)
 }
 
+// TODO: Use config struct instead of spread and fill defaults
+
 // NewWith generate a QRCode struct with
 // specified `ver`(QR version) and `ecLv`(Error Correction level)
 func NewWith(text string, opts ...EncodeOption) (*Matrix, error) {

@@ -7,21 +7,25 @@ import (
 	"image/color"
 )
 
-var DEFAULT_IMAGE_OPTIONS = ImageOptions{
-	BackgroundColor: color_WHITE, // white
-	ForegroundColor: color_BLACK, // black
-	Logo:            nil,
-	Size:            512,
-	BorderWidth:     30,
+type ImageOption interface {
+	apply(o *outputImageOptions)
 }
 
-// ImageOptions to output QR code image
-type ImageOptions struct {
-	// BackgroundColor is the background color of the QR code image.
-	BackgroundColor color.RGBA
+var defaultImageOptions = outputImageOptions{
+	backgroundColor: color_WHITE, // white
+	foregroundColor: color_BLACK, // black
+	Logo:            nil,
+	Size:            512,
+	quietZone:       30,
+}
 
-	// ForegroundColor is the foreground color of the QR code.
-	ForegroundColor color.RGBA
+// outputImageOptions to output QR code image
+type outputImageOptions struct {
+	// backgroundColor is the background color of the QR code image.
+	backgroundColor color.RGBA `default:"color.RGB{0, 0, 0}"`
+
+	// foregroundColor is the foreground color of the QR code.
+	foregroundColor color.RGBA `default:"color.RGB{1,1,1}"`
 
 	// TODO: Add more customization for logo, probably move into own LogoOptions
 
@@ -29,20 +33,20 @@ type ImageOptions struct {
 	Logo image.Image
 
 	// Size in pixel of output image
-	// Note: Actual size of the QR code will be equal to Size - BorderWidth
+	// Note: Actual size of the QR code will be equal to Size - quietZone
 	Size int
 
-	// BorderWidth is the size in pixels of the quiet zone around the QR code
-	BorderWidth int
+	// quietZone is the size in pixels of the quiet zone around the QR code
+	quietZone int
 
 	// TODO
 	// halftoneImg is the halftone image for the output image.
 	//halftoneImg image.Image
 }
 
-func (oo *ImageOptions) qrValueToRGBA(v gqr.QRValue) (rgba color.RGBA) {
+func (oo *outputImageOptions) qrValueToRGBA(v gqr.QRValue) (rgba color.RGBA) {
 	if v.IsSet() {
-		rgba = oo.ForegroundColor
+		rgba = oo.foregroundColor
 		return rgba
 	}
 

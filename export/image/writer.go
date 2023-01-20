@@ -10,19 +10,19 @@ import (
 
 // Exporter exports gqr.Matrix to image.Image
 type Exporter struct {
-	options *ImageOptions
+	options *outputImageOptions
 }
 
-// New creates new ImageExporter with default options. (see DEFAULT_IMAGE_OPTIONS)
-func New() Exporter {
-	return NewWithOptions(DEFAULT_IMAGE_OPTIONS)
-}
+// New creates new Exporter. (see defaultImageOptions)
+func New(opts ...ImageOption) Exporter {
+	dst := defaultImageOptions
 
-// NewWithOptions creates ImageExporter with custom options. (see ImageOptions)
-func NewWithOptions(opt ImageOptions) Exporter {
-	// TODO: Not working since defautl values are not applied
+	for _, opt := range opts {
+		opt.apply(&dst)
+	}
+
 	return Exporter{
-		options: &opt,
+		options: &dst,
 	}
 }
 
@@ -36,11 +36,11 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	dc := gg.NewContext(o.Size, o.Size)
 
 	// draw background
-	dc.SetColor(o.BackgroundColor)
+	dc.SetColor(o.backgroundColor)
 	dc.DrawRectangle(0, 0, float64(o.Size), float64(o.Size))
 	dc.Fill()
 
-	actualSize := o.Size - o.BorderWidth*2
+	actualSize := o.Size - o.quietZone*2
 	modWidth := float64(actualSize) / float64(mat.Width())
 
 	// Fixme: should be avaliable as boolean like "touchesNeighbours" in shape interface
@@ -72,8 +72,8 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 
 	// iterate the matrix to Draw each pixel
 	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
-		ctx.x = float64(x)*modWidth + float64(o.BorderWidth)
-		ctx.y = float64(y)*modWidth + float64(o.BorderWidth)
+		ctx.x = float64(x)*modWidth + float64(o.quietZone)
+		ctx.y = float64(y)*modWidth + float64(o.quietZone)
 		ctx.color = o.qrValueToRGBA(v)
 
 		switch typ := v.Type(); typ {
