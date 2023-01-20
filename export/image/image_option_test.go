@@ -1,4 +1,4 @@
-package standard
+package image
 
 import (
 	"github.com/quickqr/gqr"
@@ -8,7 +8,7 @@ import (
 )
 
 func Test_stateRGBA(t *testing.T) {
-	oo := defaultOutputImageOption()
+	oo := DEFAULT_IMAGE_OPTIONS
 
 	type args struct {
 		v gqr.QRValue
@@ -21,43 +21,43 @@ func Test_stateRGBA(t *testing.T) {
 		{
 			name: "case 1",
 			args: args{v: gqr.QRValue_DATA_V0},
-			want: oo.bgColor,
+			want: oo.BackgroundColor,
 		},
 		{
 			name: "case 2",
 			args: args{v: gqr.QRValue_INIT_V0},
-			want: oo.bgColor,
+			want: oo.BackgroundColor,
 		},
 		{
 			name: "case 3",
 			args: args{v: gqr.QRValue_DATA_V1},
-			want: oo.qrColor,
+			want: oo.ForegroundColor,
 		},
 		{
 			name: "case 4",
 			args: args{v: gqr.QRValue_FORMAT_V1},
-			want: oo.qrColor,
+			want: oo.ForegroundColor,
 		},
 		{
 			name: "case 5",
 			args: args{v: gqr.QRValue_VERSION_V1},
-			want: oo.qrColor,
+			want: oo.ForegroundColor,
 		},
 		{
 			name: "case 6",
 			args: args{v: gqr.QRValue(0x0f)},
-			want: oo.qrColor,
+			want: oo.ForegroundColor,
 		},
 		{
 			name: "case 7",
 			args: args{v: gqr.QRValue_FINDER_V1},
-			want: oo.qrColor,
+			want: oo.ForegroundColor,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := oo.translateToRGBA(tt.args.v); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("translateToRGBA() = %v, want %v", got, tt.want)
+			if got := oo.qrValueToRGBA(tt.args.v); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("qrValueToRGBA() = %v, want %v", got, tt.want)
 			}
 		})
 	}

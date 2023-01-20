@@ -1,4 +1,4 @@
-package standard
+package image
 
 // FIXME: Update for new API
 
@@ -46,8 +46,8 @@ package standard
 //	w, err := New("./testdata/qrtest_logo.jpeg",
 //		WithBgColorRGBHex("#b8de6f"),
 //		WithFgColorRGBHex("#f1e189"),
-//		WithLogoImageFileJPEG("./testdata/logo.jpeg"),
-//		//WithLogoImageFilePNG("./testdata/logo.png"), // png required
+//		WithLogoImageFileJPEG("./testdata/Logo.jpeg"),
+//		//WithLogoImageFilePNG("./testdata/Logo.png"), // png required
 //	)
 //	require.NoError(t, err)
 //
