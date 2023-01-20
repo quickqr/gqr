@@ -3,7 +3,7 @@ package image
 import (
 	"github.com/fogleman/gg"
 	"github.com/quickqr/gqr"
-	"github.com/quickqr/gqr/writer/image/imgkit"
+	"github.com/quickqr/gqr/export/image/imgkit"
 	"image"
 	"image/color"
 )

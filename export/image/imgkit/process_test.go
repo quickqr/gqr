@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/quickqr/gqr/writer/image/imgkit"
+	"github.com/quickqr/gqr/export/image/imgkit"
 )
 
 func Test_Gray(t *testing.T) {

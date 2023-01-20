@@ -9,7 +9,7 @@ package image
 //	"image/png"
 //	"os"
 //
-//	"github.com/quickqr/gqr/writer/image/imgkit"
+//	"github.com/quickqr/gqr/export/image/imgkit"
 //)
 //
 //// funcOption wraps a function that modifies ImageOptions into an
