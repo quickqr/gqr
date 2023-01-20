@@ -2,19 +2,17 @@ package gqr
 
 import (
 	"errors"
+	"github.com/quickqr/gqr/reedsolomon/binary"
 	"log"
 	"strconv"
-
-	// "github.com/skip2/go-qrcode/bitset"
-	"github.com/yeqown/reedsolomon/binary"
 )
 
-// ecLevel error correction level
-type ecLevel int
+// ErrorCorrectionLevel error correction level
+type ErrorCorrectionLevel int
 
 const (
 	// ErrorCorrectionLow :Level L: 7% error recovery.
-	ErrorCorrectionLow ecLevel = iota + 1
+	ErrorCorrectionLow ErrorCorrectionLevel = iota + 1
 
 	// ErrorCorrectionMedium :Level M: 15% error recovery. Good default choice.
 	ErrorCorrectionMedium
@@ -109,9 +107,9 @@ type version struct {
 	Ver int `json:"ver"`
 
 	// ECLevel error correction 0, 1, 2, 3
-	ECLevel ecLevel `json:"eclv"`
+	ECLevel ErrorCorrectionLevel `json:"eclv"`
 
-	// Cap includes each type's max capacity (specified by `Ver` and `ecLevel`)
+	// Cap includes each type's max capacity (specified by `Ver` and `ErrorCorrectionLevel`)
 	// ref to: https://www.thonky.com/qr-code-tutorial/character-capacities
 	Cap capacity `json:"cap"`
 
@@ -233,7 +231,7 @@ func binarySearchVersion(low, high int, compare func(*version) int) (hit version
 }
 
 // defaultBinaryCompare built-in compare function for binary search.
-func defaultBinaryCompare(ver int, ec ecLevel) func(cursor *version) int {
+func defaultBinaryCompare(ver int, ec ErrorCorrectionLevel) func(cursor *version) int {
 	return func(cursor *version) int {
 		switch r := ver - cursor.Ver; r {
 		case 0:
@@ -248,7 +246,7 @@ func defaultBinaryCompare(ver int, ec ecLevel) func(cursor *version) int {
 
 // loadVersion get version config by specified version indicator and error correction level.
 // we can speed up this process, by shrink the range to search.
-func loadVersion(lv int, ec ecLevel) version {
+func loadVersion(lv int, ec ErrorCorrectionLevel) version {
 	// each version only has 4 items in versions array,
 	// and them are ordered[ASC] already.
 	high := lv*4 - 1
@@ -268,7 +266,7 @@ func loadVersion(lv int, ec ecLevel) version {
 //
 // check out http://muyuchengfeng.xyz/%E4%BA%8C%E7%BB%B4%E7%A0%81-%E5%AD%97%E7%AC%A6%E5%AE%B9%E9%87%8F%E8%A1%A8/
 // for more details.
-func analyzeVersion(raw []byte, ec ecLevel, mode encMode) (*version, error) {
+func analyzeVersion(raw []byte, ec ErrorCorrectionLevel, mode encMode) (*version, error) {
 	step := 0
 	switch ec {
 	case ErrorCorrectionLow:

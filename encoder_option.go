@@ -19,8 +19,8 @@ type encodingOption struct {
 	// EncMode specifies which encMode to use
 	EncMode encMode
 
-	// EcLevel specifies which ecLevel to use
-	EcLevel ecLevel
+	// EcLevel specifies which ErrorCorrectionLevel to use
+	EcLevel ErrorCorrectionLevel
 
 	// PS: The version (which implicitly defines the byte capacity of the qrcode) is dynamically selected at runtime
 }
@@ -49,7 +49,7 @@ func WithEncodingMode(mode encMode) EncodeOption {
 }
 
 // WithErrorCorrectionLevel sets the error correction level.
-func WithErrorCorrectionLevel(ecLevel ecLevel) EncodeOption {
+func WithErrorCorrectionLevel(ecLevel ErrorCorrectionLevel) EncodeOption {
 	return newFnEncodingOption(func(option *encodingOption) {
 		if ecLevel < ErrorCorrectionLow || ecLevel > ErrorCorrectionHighest {
 			return

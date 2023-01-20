@@ -2,7 +2,5 @@ go 1.19
 
 use (
 	.
-	./writer/compressed
-	./writer/standard
-	./writer/terminal
+	./export/image
 )

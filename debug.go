@@ -99,7 +99,7 @@ func debugDrawTo(w io.Writer, mat Matrix) error {
 		rectangle(sx, sy, es, ey, img, gray)
 	})
 
-	// save to writer
+	// save to export
 	err := jpeg.Encode(w, img, nil)
 	if err != nil {
 		return fmt.Errorf("debugDrawTo: encode image in JPEG failed: %v", err)
