@@ -1,4 +1,4 @@
-package qrcode
+package gqr
 
 const (
 	_VERSION_COUNT       = 40  // (40 versions)

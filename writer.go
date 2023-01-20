@@ -1,4 +1,4 @@
-package qrcode
+package gqr
 
 // Writer is the interface of a QR code writer, it defines the rule of how to
 // `print` the code image from matrix. There's built-in writer to output into

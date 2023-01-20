@@ -1,10 +1,9 @@
-module github.com/yeqown/go-qrcode/v2
+module github.com/quickqr/gqr
 
 go 1.18
 
 require (
 	github.com/stretchr/testify v1.7.0
-	github.com/yeqown/reedsolomon v1.0.0
 )
 
 require (

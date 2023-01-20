@@ -1,13 +1,12 @@
-package qrcode
+package gqr
 
 import (
 	"fmt"
+	"github.com/quickqr/gqr/reedsolomon"
+	"github.com/quickqr/gqr/reedsolomon/binary"
 	"log"
 	"math"
 	"sync"
-
-	"github.com/yeqown/reedsolomon"
-	"github.com/yeqown/reedsolomon/binary"
 )
 
 // New generate a QRCode struct to create

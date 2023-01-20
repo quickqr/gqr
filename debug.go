@@ -1,4 +1,4 @@
-package qrcode
+package gqr
 
 import (
 	"fmt"

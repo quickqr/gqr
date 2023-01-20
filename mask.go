@@ -1,4 +1,4 @@
-package qrcode
+package gqr
 
 // maskPatternModulo ...
 // mask Pattern ref to: https://www.thonky.com/qr-code-tutorial/mask-patterns

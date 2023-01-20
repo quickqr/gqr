@@ -1,4 +1,4 @@
-package qrcode
+package gqr
 
 type EncodeOption interface {
 	apply(option *encodingOption)

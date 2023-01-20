@@ -1,4 +1,4 @@
-package qrcode
+package gqr
 
 // samestate judge two matrix qrtype is same with binary semantic.
 // QRValue_DATA_V0/QRType_INIT only equal to QRValue_DATA_V0, other state are equal to each other.

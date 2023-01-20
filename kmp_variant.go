@@ -1,4 +1,4 @@
-package qrcode
+package gqr
 
 // kmp is variant of kmp algorithm to count the pattern been in
 // src slice.
