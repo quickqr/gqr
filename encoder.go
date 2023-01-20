@@ -72,14 +72,14 @@ type encoder struct {
 	data []byte // raw input data
 
 	// initial params
-	mode encMode // encode mode
-	ecLv ecLevel // error correction level
+	mode encMode              // encode mode
+	ecLv ErrorCorrectionLevel // error correction level
 
 	// self load
 	version version // QR version ref
 }
 
-func newEncoder(m encMode, ec ecLevel, v version) *encoder {
+func newEncoder(m encMode, ec ErrorCorrectionLevel, v version) *encoder {
 	return &encoder{
 		dst:     nil,
 		data:    nil,

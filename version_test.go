@@ -22,7 +22,7 @@ func Test_loadVersion(t *testing.T) {
 	// load(defaultVersionCfg)
 	type args struct {
 		lv         int
-		recoveryLv ecLevel
+		recoveryLv ErrorCorrectionLevel
 	}
 	tests := []struct {
 		name string
@@ -71,7 +71,7 @@ func Test_analyzeVersion(t *testing.T) {
 
 	type args struct {
 		raw   []byte
-		ecLv  ecLevel
+		ecLv  ErrorCorrectionLevel
 		eMode encMode
 	}
 	tests := []struct {
@@ -131,7 +131,7 @@ func Test_binarySearchVersion(t *testing.T) {
 	type args struct {
 		low, high int
 		v         int
-		ecLv      ecLevel
+		ecLv      ErrorCorrectionLevel
 	}
 
 	tests := []struct {
@@ -227,7 +227,7 @@ func Test_binarySearchVersion_all(t *testing.T) {
 		assert.True(t, found)
 		assert.Equal(t, v, hit)
 
-		//t.Logf("finding: version=%d, ecLevel=%d", v.Ver, v.ECLevel)
+		//t.Logf("finding: version=%d, ErrorCorrectionLevel=%d", v.Ver, v.ECLevel)
 	}
 }
 
