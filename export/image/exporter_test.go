@@ -3,10 +3,10 @@ package image
 // FIXME: Update for new API
 
 //func Test_New(t *testing.T) {
-//	qrc, err := gqr.New("cost 3+ days to read docs and coding")
+//	qrc, err := gqr.NewExporter("cost 3+ days to read docs and coding")
 //	require.NoError(t, err)
 //
-//	w, err := New("./testdata/qrtest.jpeg")
+//	w, err := NewExporter("./testdata/qrtest.jpeg")
 //	require.NoError(t, err)
 //
 //	// save file
@@ -22,10 +22,10 @@ package image
 //}
 //
 //func Test_New_WithOutputOption_bg_fg_width(t *testing.T) {
-//	qrc, err := gqr.New("Test_New_WithOutputOption_bg_fg_width")
+//	qrc, err := gqr.NewExporter("Test_New_WithOutputOption_bg_fg_width")
 //	require.NoError(t, err)
 //
-//	w, err := New("./testdata/qrtest_fg_bg.jpeg",
+//	w, err := NewExporter("./testdata/qrtest_fg_bg.jpeg",
 //		WithBgColorRGBHex("#b8de6f"),
 //		WithFgColorRGBHex("#01c5c4"),
 //		WithQRWidth(20),
@@ -40,14 +40,14 @@ package image
 //func Test_New_WithOutputOption_Logo(t *testing.T) {
 //	gqr.SetDebugMode()
 //
-//	qrc, err := gqr.New("Test_New_WithOutputOption_Logo")
+//	qrc, err := gqr.NewExporter("Test_New_WithOutputOption_Logo")
 //	require.NoError(t, err)
 //
-//	w, err := New("./testdata/qrtest_logo.jpeg",
+//	w, err := NewExporter("./testdata/qrtest_logo.jpeg",
 //		WithBgColorRGBHex("#b8de6f"),
 //		WithFgColorRGBHex("#f1e189"),
-//		WithLogoImageFileJPEG("./testdata/Logo.jpeg"),
-//		//WithLogoImageFilePNG("./testdata/Logo.png"), // png required
+//		WithLogoImageFileJPEG("./testdata/logo.jpeg"),
+//		//WithLogoImageFilePNG("./testdata/logo.png"), // png required
 //	)
 //	require.NoError(t, err)
 //
@@ -57,10 +57,10 @@ package image
 //}
 //
 //func Test_New_WithOutputOption_Shape(t *testing.T) {
-//	qrc, err := gqr.New("Test_New_WithOutputOption_Shape")
+//	qrc, err := gqr.NewExporter("Test_New_WithOutputOption_Shape")
 //	require.NoError(t, err)
 //
-//	w, err := New("./testdata/qrtest_circle.jpeg",
+//	w, err := NewExporter("./testdata/qrtest_circle.jpeg",
 //		WithBgColorRGBHex("#b8de6f"),
 //		WithFgColorRGBHex("#f1e189"),
 //		WithCircleShape(),
@@ -72,10 +72,10 @@ package image
 //}
 //
 //func Test_New_WithBorderWidth(t *testing.T) {
-//	qrc, err := gqr.New("Test_New_WithOutputOption_Shape")
+//	qrc, err := gqr.NewExporter("Test_New_WithOutputOption_Shape")
 //	require.NoError(t, err)
 //
-//	w, err := New("./testdata/qrtest_border_width.jpeg", WithBorderWidth(10, 20, 30, 40))
+//	w, err := NewExporter("./testdata/qrtest_border_width.jpeg", WithBorderWidth(10, 20, 30, 40))
 //
 //	// save file
 //	err = qrc.Save(w)
@@ -85,14 +85,14 @@ package image
 //// Test_Issue40
 //// https://github.com/yeqown/go-qrcode/issues/40
 //func Test_Issue40(t *testing.T) {
-//	qrc, err := gqr.New("https://yeqown.xyzom/")
+//	qrc, err := gqr.NewExporter("https://yeqown.xyzom/")
 //	require.NoError(t, err)
-//	w1, err := New("./testdata/issue40_1.png")
+//	w1, err := NewExporter("./testdata/issue40_1.png")
 //	require.NoError(t, err)
 //	err = qrc.Save(w1)
 //	require.NoError(t, err)
 //
-//	w2, err := New("./testdata/issue40_2.png")
+//	w2, err := NewExporter("./testdata/issue40_2.png")
 //	require.NoError(t, err)
 //	err = qrc.Save(w2)
 //	require.NoError(t, err)
@@ -106,7 +106,7 @@ package image
 //}
 //
 //func hashFile(filename string) (string, error) {
-//	h := md5.New()
+//	h := md5.NewExporter()
 //
 //	fd1, err := os.Open(filename)
 //	if err != nil {
@@ -140,10 +140,10 @@ package image
 //}
 //
 //func Test_Attribute(t *testing.T) {
-//	qrc, err := gqr.New("https://yeqown.xyzom")
+//	qrc, err := gqr.NewExporter("https://yeqown.xyzom")
 //	require.NoError(t, err)
 //
-//	w, err := New("./testdata/attr.png",
+//	w, err := NewExporter("./testdata/attr.png",
 //		WithBuiltinImageEncoder(PNG_FORMAT),
 //		WithQRWidth(13),
 //		WithBorderWidth(1, 2, 3, 4),
@@ -177,10 +177,10 @@ package image
 ////}
 //
 //func Test_writer_WithBgTransparent(t *testing.T) {
-//	qrc, err := gqr.New("https://yeqown.xyzom")
+//	qrc, err := gqr.NewExporter("https://yeqown.xyzom")
 //	require.NoError(t, err)
 //
-//	w, err := New("./testdata/transparent.png",
+//	w, err := NewExporter("./testdata/transparent.png",
 //		WithBuiltinImageEncoder(PNG_FORMAT),
 //		WithBorderWidth(20),
 //		WithBgTransparent(),

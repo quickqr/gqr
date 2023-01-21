@@ -61,38 +61,28 @@ func WithFgColorRGBHex(hex string) ImageOption {
 	})
 }
 
-// WithLogoImage image should only has 1/5 width of QRCode at most
-func WithLogoImage(img image.Image) ImageOption {
-	return newFuncOption(func(oo *outputImageOptions) {
-		if img == nil {
-			return
-		}
-
-		oo.Logo = img
-	})
-}
-
 func WithLogo(img image.Image) ImageOption {
 	return newFuncOption(func(oo *outputImageOptions) {
-		oo.Logo = img
+		oo.logo = img
 	})
 }
 
 // WithImageSize specify width of each qr block
 func WithImageSize(size int) ImageOption {
 	return newFuncOption(func(oo *outputImageOptions) {
-		oo.Size = size
+		oo.size = size
 	})
 }
 
 // WithQuietZone set padding around the QR code.
-// Note actual size of the QR code is equal to Size - quietZone * 2 (2 sides)
+// Note actual size of the QR code is equal to size - quietZone * 2 (2 sides)
 func WithQuietZone(size int) ImageOption {
 	return newFuncOption(func(oo *outputImageOptions) {
 		oo.quietZone = size
 	})
 }
 
+// TODO:
 //// WithHalftone ...
 //func WithHalftone(path string) ImageOption {
 //	return newFuncOption(func(oo *outputImageOptions) {

@@ -13,8 +13,8 @@ type Exporter struct {
 	options *outputImageOptions
 }
 
-// New creates new Exporter. (see defaultImageOptions)
-func New(opts ...ImageOption) Exporter {
+// NewExporter creates new Exporter. (see defaultImageOptions)
+func NewExporter(opts ...ImageOption) Exporter {
 	dst := defaultImageOptions
 
 	for _, opt := range opts {
@@ -27,23 +27,22 @@ func New(opts ...ImageOption) Exporter {
 }
 
 // TODO:
+// - Round amount of pixel in module, draw to QR code and then scale it to fit in desired constrains
 // - Draw finders separately
 
-// Export QR
+// Export QR to Image.image
 func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	o := e.options
 
-	dc := gg.NewContext(o.Size, o.Size)
+	dc := gg.NewContext(o.size, o.size)
 
 	// draw background
 	dc.SetColor(o.backgroundColor)
-	dc.DrawRectangle(0, 0, float64(o.Size), float64(o.Size))
+	dc.DrawRectangle(0, 0, float64(o.size), float64(o.size))
 	dc.Fill()
 
-	actualSize := o.Size - o.quietZone*2
+	actualSize := o.size - o.quietZone*2
 	modWidth := float64(actualSize) / float64(mat.Width())
-
-	// Fixme: should be avaliable as boolean like "touchesNeighbours" in shape interface
 	// 1 pixel of padding to cover gaps that appear after floating point arithmetics
 	modPad := 1.0
 
@@ -111,13 +110,13 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 		}
 	})
 
-	if o.Logo != nil {
-		// Logo will automatically rescale to the size of QR code
+	if o.logo != nil {
+		// logo will automatically rescale to the size of QR code
 		logoWidth := actualSize
-		scaled := imgkit.Scale(o.Logo, image.Rect(0, 0, logoWidth, logoWidth), nil)
+		scaled := imgkit.Scale(o.logo, image.Rect(0, 0, logoWidth, logoWidth), nil)
 
 		//should icon upper-left to start
-		dc.DrawImage(scaled, (o.Size-logoWidth)/2, (o.Size-logoWidth)/2)
+		dc.DrawImage(scaled, (o.size-logoWidth)/2, (o.size-logoWidth)/2)
 	}
 
 	return dc.Image()

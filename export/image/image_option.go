@@ -14,8 +14,8 @@ type ImageOption interface {
 var defaultImageOptions = outputImageOptions{
 	backgroundColor: color_WHITE, // white
 	foregroundColor: color_BLACK, // black
-	Logo:            nil,
-	Size:            512,
+	logo:            nil,
+	size:            512,
 	quietZone:       30,
 }
 
@@ -27,14 +27,14 @@ type outputImageOptions struct {
 	// foregroundColor is the foreground color of the QR code.
 	foregroundColor color.RGBA `default:"color.RGB{1,1,1}"`
 
-	// TODO: Add more customization for logo, probably move into own LogoOptions
+	// logo this icon image would be put the center of QR Code image
+	logo image.Image
+	// TODO:
+	// logoContainer { color, size, border-radius }
 
-	// Logo this icon image would be put the center of QR Code image
-	Logo image.Image
-
-	// Size in pixel of output image
-	// Note: Actual size of the QR code will be equal to Size - quietZone
-	Size int
+	// size in pixel of output image
+	// Note: Actual size of the QR code will be equal to size - quietZone
+	size int
 
 	// quietZone is the size in pixels of the quiet zone around the QR code
 	quietZone int
@@ -72,6 +72,8 @@ var (
 	}
 )
 
+// TODO: Add support for length of 3, 6 and 8 (with alpha)
+
 // parseFromHex convert hex string into color.RGBA
 func parseFromHex(s string) color.RGBA {
 	c := color.RGBA{
@@ -101,6 +103,7 @@ func parseFromHex(s string) color.RGBA {
 	return c
 }
 
+// TODO: Transparent color does not work.
 func parseFromColor(c color.Color) color.RGBA {
 	rgba, ok := c.(color.RGBA)
 	if ok {
