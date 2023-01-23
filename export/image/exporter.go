@@ -26,90 +26,22 @@ func NewExporter(opts ...ImageOption) Exporter {
 	}
 }
 
-// TODO:
-// - Round amount of pixel in module, draw to QR code and then scale it to fit in desired constrains
-// - Draw finders separately
-
 // Export QR to Image.image
 func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	o := e.options
-
+	actualSize := o.size - o.quietZone*2
 	dc := gg.NewContext(o.size, o.size)
 
-	// draw background
+	// Draw background
 	dc.SetColor(o.backgroundColor)
 	dc.DrawRectangle(0, 0, float64(o.size), float64(o.size))
 	dc.Fill()
 
-	actualSize := o.size - o.quietZone*2
-	modWidth := float64(actualSize) / float64(mat.Width())
-	// 1 pixel of padding to cover gaps that appear after floating point arithmetics
-	modPad := 1.0
+	// Draw QR code data.
+	qrData := e.getDataImage(&mat, actualSize)
+	dc.DrawImage(qrData, o.quietZone, o.quietZone)
 
-	// qrcode block draw context
-	ctx := &DrawContext{
-		Context: dc,
-		x:       0.0,
-		y:       0.0,
-		w:       modWidth + modPad,
-		h:       modWidth + modPad,
-		color:   color.Black,
-	}
-
-	//var (
-	//	halftoneImg image.Image
-	//	halftoneW   = float64(opt.qrBlockWidth()) / 3.0
-	//)
-	//if opt.halftoneImg != nil {
-	//	halftoneImg = imgkit.Binaryzation(
-	//		imgkit.Scale(opt.halftoneImg, image.Rect(0, 0, mat.Width()*3, mat.Width()*3), nil),
-	//		60,
-	//	)
-	//
-	//	//_ = imgkit.Save(halftoneImg, "mask.jpeg")
-	//}
-
-	// iterate the matrix to Draw each pixel
-	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
-		ctx.x = float64(x)*modWidth + float64(o.quietZone)
-		ctx.y = float64(y)*modWidth + float64(o.quietZone)
-		ctx.color = o.qrValueToRGBA(v)
-
-		switch typ := v.Type(); typ {
-		case gqr.QRType_FINDER:
-			// Pass finders since they're drawn separately
-			break
-		default:
-			// Fixme: add generic shapes back
-			ctx.DrawRectangle(ctx.x, ctx.y, float64(ctx.w), float64(ctx.w))
-			ctx.SetColor(ctx.color)
-			ctx.Fill()
-			// TODO: Fix halftones
-			//if halftoneImg == nil {
-			//	shape.Draw(ctx)
-			//	return
-			//}
-			//
-			//ctx2 := &DrawContext{
-			//	Context: ctx.Context,
-			//	w:       int(halftoneW),
-			//	h:       int(halftoneW),
-			//}
-			//// only halftone image enabled and current block is Data.
-			//for i := 0; i < 3; i++ {
-			//	for j := 0; j < 3; j++ {
-			//		ctx2.x, ctx2.y = ctx.x+float64(i)*halftoneW, ctx.y+float64(j)*halftoneW
-			//		ctx2.color = halftoneImg.At(x*3+i, y*3+j)
-			//		if i == 1 && j == 1 {
-			//			ctx2.color = ctx.color
-			//			// only center block keep the origin color.
-			//		}
-			//		shape.Draw(ctx2)
-			//	}
-			//}
-		}
-	})
-
+	// TODO: Add support for logo image background container
 	if o.logo != nil {
 		// logo will automatically rescale to the size of QR code
 		logoWidth := actualSize
@@ -121,4 +53,50 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 
 	return dc.Image()
 
+}
+
+// TODO:
+// - Add custom shapes for modules and finders, draw finders after other modules were drawn
+// - Support for gradient (direction, set of colors)
+// - Reimplement halftones capability from the original library
+
+// getDataImage draws pixel-perfect modules to avoid gaps between modules by ceiling width of module up and then
+// scaling down image with data to actual QR width
+func (e *Exporter) getDataImage(mat *gqr.Matrix, actualSize int) image.Image {
+	// This line ceils division result without the need of converting everything to floats.
+	// https://stackoverflow.com/a/2745086
+	modW := (e.options.size + mat.Width() - 1) / mat.Width()
+	size := modW * mat.Width()
+	dc := gg.NewContext(size, size)
+
+	// qrcode block draw context
+	ctx := &DrawContext{
+		Context: dc,
+		x:       0.0,
+		y:       0.0,
+		w:       modW,
+		h:       modW,
+		color:   color.Black,
+	}
+
+	// iterate the matrix to Draw each pixel
+	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
+		ctx.x = float64(x * modW)
+		ctx.y = float64(y * modW)
+		ctx.color = e.options.qrValueToRGBA(v)
+
+		// Fixme: add generic shapes back
+		ctx.DrawRectangle(ctx.x, ctx.y, float64(ctx.w), float64(ctx.w))
+		ctx.SetColor(ctx.color)
+		ctx.Fill()
+
+		// FIXME: Should ignore Finders
+		//switch typ := v.Type(); typ {
+		//case gqr.QRType_FINDER:
+		//	break
+		//default:
+		//}
+	})
+
+	return imgkit.Scale(dc.Image(), image.Rect(0, 0, actualSize, actualSize), nil)
 }

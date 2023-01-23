@@ -24,7 +24,7 @@ type DrawContext struct {
 	*gg.Context
 
 	x, y float64
-	w, h float64
+	w, h int
 
 	color color.Color
 }
@@ -35,7 +35,7 @@ func (dc *DrawContext) UpperLeft() (dx, dy float64) {
 }
 
 // Edge returns width and height of each shape could take at most.
-func (dc *DrawContext) Edge() (width, height float64) {
+func (dc *DrawContext) Edge() (width, height int) {
 	return dc.w, dc.h
 }
 
