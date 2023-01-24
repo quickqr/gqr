@@ -67,7 +67,13 @@ func (e *Exporter) getDataImage(mat *gqr.Matrix, actualSize int) image.Image {
 	// This line ceils division result without the need of converting everything to floats.
 	// https://stackoverflow.com/a/2745086
 	modW := (e.options.size + mat.Width() - 1) / mat.Width()
+
 	size := modW * mat.Width()
+
+	// Apply gaps after real image size was calculated
+	gap := float64(modW) * e.options.moduleGap
+	realWidth := float64(modW) - gap
+
 	dc := gg.NewContext(size, size)
 
 	// qrcode block draw context
@@ -75,8 +81,8 @@ func (e *Exporter) getDataImage(mat *gqr.Matrix, actualSize int) image.Image {
 		Context: dc,
 		X:       0.0,
 		Y:       0.0,
-		Width:   modW,
-		Height:  modW,
+		Width:   realWidth,
+		Height:  realWidth,
 		Color:   color.Black,
 	}
 
@@ -86,9 +92,8 @@ func (e *Exporter) getDataImage(mat *gqr.Matrix, actualSize int) image.Image {
 			return
 		}
 
-		ctx.X = float64(x * ctx.Width)
-		ctx.Y = float64(y * ctx.Width)
-		//ctx.Width = modW - 2
+		ctx.X = float64(x)*(ctx.Width+gap) + gap/2
+		ctx.Y = float64(y)*(ctx.Width+gap) + gap/2
 
 		ctx.Color = e.options.qrValueToRGBA(v)
 

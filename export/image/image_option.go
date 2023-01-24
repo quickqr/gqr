@@ -18,6 +18,7 @@ var defaultImageOptions = imageOptions{
 	logo:            nil,
 	size:            512,
 	quietZone:       30,
+	moduleGap:       0,
 	drawModuleFn:    shapes.SquareModuleShape(),
 }
 
@@ -40,6 +41,8 @@ type imageOptions struct {
 
 	// quietZone is the size in pixels of the quiet zone around the QR code
 	quietZone int
+
+	moduleGap float64
 
 	drawModuleFn shapes.ModuleShapeDrawer
 	// TODO:

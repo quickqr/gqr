@@ -10,9 +10,10 @@ type DrawContext struct {
 	*gg.Context
 
 	X, Y          float64
-	Width, Height int
+	Width, Height float64
 
 	Color color.Color
 }
 
+// TODO: Access to matrix, gap info
 type ModuleShapeDrawer = func(ctx *DrawContext)

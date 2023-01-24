@@ -90,6 +90,13 @@ func WithModuleShape(drawer shapes.ModuleShapeDrawer) ImageOption {
 	})
 }
 
+// WithModuleGap sets margin between each module on the QR code
+func WithModuleGap(gap float64) ImageOption {
+	return newFuncOption(func(oo *imageOptions) {
+		oo.moduleGap = gap
+	})
+}
+
 // TODO:
 //// WithHalftone ...
 //func WithHalftone(path string) ImageOption {
