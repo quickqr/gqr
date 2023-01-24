@@ -158,8 +158,8 @@ package image
 //
 //	width, height, err := statImage("./testdata/attr.png")
 //	require.NoError(t, err)
-//	assert.Equal(t, width, attr.W)
-//	assert.Equal(t, height, attr.H)
+//	assert.Equal(t, width, attr.Width)
+//	assert.Equal(t, height, attr.Height)
 //}
 //
 ////

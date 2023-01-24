@@ -3,24 +3,26 @@ package image
 import (
 	"fmt"
 	"github.com/quickqr/gqr"
+	"github.com/quickqr/gqr/export/image/shapes"
 	"image"
 	"image/color"
 )
 
 type ImageOption interface {
-	apply(o *outputImageOptions)
+	apply(o *imageOptions)
 }
 
-var defaultImageOptions = outputImageOptions{
+var defaultImageOptions = imageOptions{
 	backgroundColor: color_WHITE, // white
 	foregroundColor: color_BLACK, // black
 	logo:            nil,
 	size:            512,
 	quietZone:       30,
+	drawModuleFn:    shapes.SquareModuleShape(),
 }
 
-// outputImageOptions to output QR code image
-type outputImageOptions struct {
+// imageOptions to output QR code image
+type imageOptions struct {
 	// backgroundColor is the background color of the QR code image.
 	backgroundColor color.RGBA `default:"color.RGB{0, 0, 0}"`
 
@@ -39,12 +41,16 @@ type outputImageOptions struct {
 	// quietZone is the size in pixels of the quiet zone around the QR code
 	quietZone int
 
+	drawModuleFn shapes.ModuleShapeDrawer
+	// TODO:
+	//drawFinderFn shapes.FinderShapeDrawer
+
 	// TODO
 	// halftoneImg is the halftone image for the output image.
 	//halftoneImg image.Image
 }
 
-func (oo *outputImageOptions) qrValueToRGBA(v gqr.QRValue) (rgba color.RGBA) {
+func (oo *imageOptions) qrValueToRGBA(v gqr.QRValue) (rgba color.RGBA) {
 	if v.IsSet() {
 		rgba = oo.foregroundColor
 		return rgba

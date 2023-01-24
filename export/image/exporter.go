@@ -4,13 +4,14 @@ import (
 	"github.com/fogleman/gg"
 	"github.com/quickqr/gqr"
 	"github.com/quickqr/gqr/export/image/imgkit"
+	"github.com/quickqr/gqr/export/image/shapes"
 	"image"
 	"image/color"
 )
 
 // Exporter exports gqr.Matrix to image.Image
 type Exporter struct {
-	options *outputImageOptions
+	options *imageOptions
 }
 
 // NewExporter creates new Exporter. (see defaultImageOptions)
@@ -70,25 +71,33 @@ func (e *Exporter) getDataImage(mat *gqr.Matrix, actualSize int) image.Image {
 	dc := gg.NewContext(size, size)
 
 	// qrcode block draw context
-	ctx := &DrawContext{
+	ctx := &shapes.DrawContext{
 		Context: dc,
-		x:       0.0,
-		y:       0.0,
-		w:       modW,
-		h:       modW,
-		color:   color.Black,
+		X:       0.0,
+		Y:       0.0,
+		Width:   modW,
+		Height:  modW,
+		Color:   color.Black,
 	}
 
 	// iterate the matrix to Draw each pixel
 	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
-		ctx.x = float64(x * modW)
-		ctx.y = float64(y * modW)
-		ctx.color = e.options.qrValueToRGBA(v)
+		if v.Type() == gqr.QRType_FINDER {
+			return
+		}
+
+		ctx.X = float64(x * ctx.Width)
+		ctx.Y = float64(y * ctx.Width)
+		//ctx.Width = modW - 2
+
+		ctx.Color = e.options.qrValueToRGBA(v)
+
+		e.options.drawModuleFn(ctx)
 
 		// Fixme: add generic shapes back
-		ctx.DrawRectangle(ctx.x, ctx.y, float64(ctx.w), float64(ctx.w))
-		ctx.SetColor(ctx.color)
-		ctx.Fill()
+		//ctx.DrawRectangle(ctx.X, ctx.Y, float64(ctx.Width), float64(ctx.Width))
+		//ctx.SetColor(ctx.Color)
+		//ctx.Fill()
 
 		// FIXME: Should ignore Finders
 		//switch typ := v.Type(); typ {

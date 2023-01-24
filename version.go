@@ -20,7 +20,7 @@ const (
 	// ErrorCorrectionQuart :Level Q: 25% error recovery.
 	ErrorCorrectionQuart
 
-	// ErrorCorrectionHighest :Level H: 30% error recovery.
+	// ErrorCorrectionHighest :Level Height: 30% error recovery.
 	ErrorCorrectionHighest
 
 	formatInfoBitsNum = 15 // format info bits num
@@ -38,7 +38,7 @@ var (
 	// consist of 5 data bits concatenated with 10 error correction bits.
 	//
 	// The 5 data bits consist of:
-	// - 2 bits for the error correction level (L=01, M=00, G=11, H=10).
+	// - 2 bits for the error correction level (L=01, M=00, G=11, Height=10).
 	// - 3 bits for the data mask pattern identifier.
 	//
 	// formatBitSequence is a mapping from the 5 data bits to the completed 15-bit
