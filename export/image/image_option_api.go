@@ -44,7 +44,7 @@ func WithBgColorRGBHex(hex string) ImageOption {
 	})
 }
 
-// WithFgColor QR color
+// WithFgColor sets color that is used to draw modules (ignored if gradient is set)
 func WithFgColor(c color.Color) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		if c == nil {
@@ -62,13 +62,14 @@ func WithFgColorRGBHex(hex string) ImageOption {
 	})
 }
 
+// WithLogo embeds img at the center of the image
 func WithLogo(img image.Image) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.logo = img
 	})
 }
 
-// WithImageSize specify width of each qr block
+// WithImageSize sets size of outputted image in pixels
 func WithImageSize(size int) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.size = size

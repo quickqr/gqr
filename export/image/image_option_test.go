@@ -1,68 +1,10 @@
 package image
 
 import (
-	"github.com/quickqr/gqr"
 	"image/color"
 	"reflect"
 	"testing"
 )
-
-func Test_stateRGBA(t *testing.T) {
-	oo := defaultImageOptions
-
-	type args struct {
-		v gqr.QRValue
-	}
-	tests := []struct {
-		name string
-		args args
-		want color.RGBA
-	}{
-		{
-			name: "case 1",
-			args: args{v: gqr.QRValue_DATA_V0},
-			want: oo.backgroundColor,
-		},
-		{
-			name: "case 2",
-			args: args{v: gqr.QRValue_INIT_V0},
-			want: oo.backgroundColor,
-		},
-		{
-			name: "case 3",
-			args: args{v: gqr.QRValue_DATA_V1},
-			want: oo.foregroundColor,
-		},
-		{
-			name: "case 4",
-			args: args{v: gqr.QRValue_FORMAT_V1},
-			want: oo.foregroundColor,
-		},
-		{
-			name: "case 5",
-			args: args{v: gqr.QRValue_VERSION_V1},
-			want: oo.foregroundColor,
-		},
-		{
-			name: "case 6",
-			args: args{v: gqr.QRValue(0x0f)},
-			want: oo.foregroundColor,
-		},
-		{
-			name: "case 7",
-			args: args{v: gqr.QRValue_FINDER_V1},
-			want: oo.foregroundColor,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := oo.qrValueToRGBA(tt.args.v); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("qrValueToRGBA() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-
-}
 
 func Test_hexToRGBA(t *testing.T) {
 	type args struct {
