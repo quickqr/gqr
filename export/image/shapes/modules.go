@@ -1,21 +1,31 @@
 package shapes
 
-// TODO: Margin should be set inside of these functions because some of them need to control when to add margin
-// (for example, when using "connectModules" in RoundedModuleShape
+import (
+	"github.com/fogleman/gg"
+	"image/color"
+)
 
-// SquareModuleShape draws simple rectangle as module
-func SquareModuleShape() ModuleShapeDrawer {
-	return func(ctx *DrawContext) {
-		ctx.DrawRectangle(ctx.X, ctx.Y, ctx.Width, ctx.Width)
-		ctx.SetColor(ctx.Color)
-		ctx.Fill()
-	}
+// DrawContext is a context for drawing single module on the image
+type DrawContext struct {
+	*gg.Context
+
+	X, Y    float64
+	ModSize float64
+	Gap     float64
+
+	Color color.Color
 }
 
-// RoundedModuleShape draws module with rounded corners.
+type ModuleDrawer = func(ctx *DrawContext)
+
+// SquareModuleShape draws simple square as module
+func SquareModuleShape() ModuleDrawer {
+	return RoundedModuleShape(0)
+}
+
+// RoundedModuleShape draws module as square with rounded corners.
 // Supplied value is clamped between 0 (no roundness) and 0.5 (circle shape)
-// TODO: Add "connectModules" option to specify whether to connect modules when neighbouring
-func RoundedModuleShape(borderRadius float64) ModuleShapeDrawer {
+func RoundedModuleShape(borderRadius float64) ModuleDrawer {
 	if borderRadius > 0.5 {
 		borderRadius = 0.5
 	}
@@ -23,9 +33,9 @@ func RoundedModuleShape(borderRadius float64) ModuleShapeDrawer {
 		borderRadius = 0
 	}
 
+	// TODO: Implement "connectNeighbours" feature
 	return func(ctx *DrawContext) {
-		ctx.DrawRoundedRectangle(ctx.X, ctx.Y, ctx.Width, ctx.Width, ctx.Width*borderRadius)
-		ctx.SetColor(ctx.Color)
-		ctx.Fill()
+		size := ctx.ModSize - ctx.Gap
+		ctx.DrawRoundedRectangle(ctx.X, ctx.Y, size, size, size*borderRadius)
 	}
 }

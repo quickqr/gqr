@@ -20,6 +20,7 @@ var defaultImageOptions = imageOptions{
 	quietZone:       30,
 	moduleGap:       0,
 	drawModuleFn:    shapes.SquareModuleShape(),
+	drawFinder:      shapes.SquareFinderShape(),
 }
 
 // imageOptions to output QR code image
@@ -44,22 +45,12 @@ type imageOptions struct {
 
 	moduleGap float64
 
-	drawModuleFn shapes.ModuleShapeDrawer
-	// TODO:
-	//drawFinderFn shapes.FinderShapeDrawer
+	drawModuleFn shapes.ModuleDrawer
+	drawFinder   shapes.FinderDrawConfig
 
 	// TODO
 	// halftoneImg is the halftone image for the output image.
 	//halftoneImg image.Image
-}
-
-func (oo *imageOptions) qrValueToRGBA(v gqr.QRValue) (rgba color.RGBA) {
-	if v.IsSet() {
-		rgba = oo.foregroundColor
-		return rgba
-	}
-
-	return rgba
 }
 
 var (

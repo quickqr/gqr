@@ -27,7 +27,7 @@ func evaluation(mat *Matrix) (score int) {
 // checking for the same condition. Add the horizontal and vertical total to obtain penalty score
 func rule1(mat *Matrix) (score int) {
 	// prerequisites:
-	// mat.Width() == mat.Height()
+	// mat.ModSize() == mat.Height()
 	if mat.Width() != mat.Height() {
 		debugLogf("matrix width != height, skip rule1")
 		return math.MaxInt32
@@ -105,7 +105,7 @@ func rule3(mat *Matrix) (score int) {
 
 	// prerequisites:
 	//
-	// mat.Width() == mat.Height()
+	// mat.ModSize() == mat.Height()
 	if mat.Width() != mat.Height() {
 		debugLogf("rule3 got matrix but not matched prerequisites")
 		return math.MaxInt32
@@ -139,7 +139,7 @@ func rule3(mat *Matrix) (score int) {
 func rule4(mat *Matrix) int {
 	// prerequisites:
 	//
-	// mat.Width() == mat.Height()
+	// mat.ModSize() == mat.Height()
 	if mat.Width() != mat.Height() {
 		debugLogf("rule4 got matrix but not matched prerequisites")
 		return math.MaxInt32

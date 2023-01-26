@@ -9,6 +9,9 @@ import (
 	"sync"
 )
 
+// ModSize (and height) of finder in modules
+const FINDER_SIZE = 7
+
 // New generate a QRCode struct to create
 func New(text string) (*Matrix, error) {
 	dst := DefaultEncodingOption()

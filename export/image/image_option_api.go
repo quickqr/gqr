@@ -75,8 +75,8 @@ func WithImageSize(size int) ImageOption {
 	})
 }
 
-// WithQuietZone set padding around the QR code.
-// Note actual size of the QR code is equal to size - quietZone * 2 (2 sides)
+// WithQuietZone set padding around QR code.
+// Note: actual size of the QR code is equal to size - quietZone * 2 (padding applied on every side )
 func WithQuietZone(size int) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.quietZone = size
@@ -84,13 +84,22 @@ func WithQuietZone(size int) ImageOption {
 }
 
 // WithModuleShape sets function that will draw  modules on the image
-func WithModuleShape(drawer shapes.ModuleShapeDrawer) ImageOption {
+// See: shapes.SquareModuleShape, shapes.RoundedModuleShape.
+func WithModuleShape(drawer shapes.ModuleDrawer) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.drawModuleFn = drawer
 	})
 }
 
-// WithModuleGap sets margin between each module on the QR code
+// WithFinderShape sets config for drawing 3 finders in corners of QR code.
+// See: shapes.SquareFinderShape, shapes.RoundedFinderShape.
+func WithFinderShape(c shapes.FinderDrawConfig) ImageOption {
+	return newFuncOption(func(oo *imageOptions) {
+		oo.drawFinder = c
+	})
+}
+
+// WithModuleGap sets margin between modules in QR code.
 func WithModuleGap(gap float64) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.moduleGap = gap

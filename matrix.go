@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	// ErrorOutRangeOfW x out of range of Width
+	// ErrorOutRangeOfW x out of range of ModSize
 	ErrorOutRangeOfW = errors.New("out of range of width")
 
 	// ErrorOutRangeOfH y out of range of Height

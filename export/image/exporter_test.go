@@ -158,7 +158,7 @@ package image
 //
 //	width, height, err := statImage("./testdata/attr.png")
 //	require.NoError(t, err)
-//	assert.Equal(t, width, attr.Width)
+//	assert.Equal(t, width, attr.ModSize)
 //	assert.Equal(t, height, attr.Height)
 //}
 //
@@ -166,7 +166,7 @@ package image
 ////func Test_image_draw(t *testing.T) {
 ////	m := new(gqr.Matrix)
 ////	// set all 3rd column as black else be white
-////	for x := 0; x < m.Width(); x++ {
+////	for x := 0; x < m.ModSize(); x++ {
 ////		_ = m.Set(x, 3, matrix.StateTrue)
 ////	}
 ////

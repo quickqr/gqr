@@ -39,7 +39,7 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	dc.Fill()
 
 	// Draw QR code data.
-	qrData := e.getDataImage(&mat, actualSize)
+	qrData := e.getQRImage(&mat, actualSize)
 	dc.DrawImage(qrData, o.quietZone, o.quietZone)
 
 	// TODO: Add support for logo image background container
@@ -61,18 +61,17 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 // - Support for gradient (direction, set of colors)
 // - Reimplement halftones capability from the original library
 
-// getDataImage draws pixel-perfect modules to avoid gaps between modules by ceiling width of module up and then
+// getQRImage draws pixel-perfect modules to avoid gaps between modules by ceiling width of module up and then
 // scaling down image with data to actual QR width
-func (e *Exporter) getDataImage(mat *gqr.Matrix, actualSize int) image.Image {
+func (e *Exporter) getQRImage(mat *gqr.Matrix, requiredSize int) image.Image {
 	// This line ceils division result without the need of converting everything to floats.
 	// https://stackoverflow.com/a/2745086
-	modW := (e.options.size + mat.Width() - 1) / mat.Width()
+	modSize := float64((e.options.size + mat.Width() - 1) / mat.Width())
 
-	size := modW * mat.Width()
+	size := int(modSize) * mat.Width()
 
 	// Apply gaps after real image size was calculated
-	gap := float64(modW) * e.options.moduleGap
-	realWidth := float64(modW) - gap
+	gap := modSize * e.options.moduleGap
 
 	dc := gg.NewContext(size, size)
 
@@ -81,36 +80,59 @@ func (e *Exporter) getDataImage(mat *gqr.Matrix, actualSize int) image.Image {
 		Context: dc,
 		X:       0.0,
 		Y:       0.0,
-		Width:   realWidth,
-		Height:  realWidth,
-		Color:   color.Black,
+		ModSize: modSize,
+		Gap:     gap,
+		Color:   e.options.foregroundColor,
 	}
 
+	ctx.SetColor(ctx.Color)
 	// iterate the matrix to Draw each pixel
 	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
-		if v.Type() == gqr.QRType_FINDER {
+		// Finders are drawn separately
+		if !v.IsSet() || v.Type() == gqr.QRType_FINDER {
 			return
 		}
 
-		ctx.X = float64(x)*(ctx.Width+gap) + gap/2
-		ctx.Y = float64(y)*(ctx.Width+gap) + gap/2
-
-		ctx.Color = e.options.qrValueToRGBA(v)
+		ctx.X = float64(x)*(ctx.ModSize) + gap/2
+		ctx.Y = float64(y)*(ctx.ModSize) + gap/2
 
 		e.options.drawModuleFn(ctx)
 
-		// Fixme: add generic shapes back
-		//ctx.DrawRectangle(ctx.X, ctx.Y, float64(ctx.Width), float64(ctx.Width))
-		//ctx.SetColor(ctx.Color)
-		//ctx.Fill()
-
-		// FIXME: Should ignore Finders
-		//switch typ := v.Type(); typ {
-		//case gqr.QRType_FINDER:
-		//	break
-		//default:
-		//}
 	})
+	//// Draw modules to screen
+	ctx.Fill()
 
-	return imgkit.Scale(dc.Image(), image.Rect(0, 0, actualSize, actualSize), nil)
+	e.drawFinders(dc, modSize, gap)
+
+	return imgkit.Scale(dc.Image(), image.Rect(0, 0, requiredSize, requiredSize), nil)
+}
+
+func (e *Exporter) drawFinders(dc *gg.Context, modSize float64, gap float64) {
+	dc.SetColor(e.options.foregroundColor)
+	finderSize := modSize * gqr.FINDER_SIZE
+	modSize -= gap
+
+	// Creating mask to cut out inside of outer shapes
+	mask := gg.NewContext(dc.Width(), dc.Height())
+	mask.SetColor(color.Black)
+	placeFinderShapes(mask, e.options.drawFinder.WhiteSpace, finderSize, modSize)
+	mask.Fill()
+	_ = dc.SetMask(mask.AsMask())
+	dc.InvertMask()
+
+	// Placing outer shapes
+	placeFinderShapes(dc, e.options.drawFinder.Outer, finderSize, 0)
+
+	// Resetting mask to set inner shapes
+	mask.Clear()
+	_ = dc.SetMask(mask.AsMask())
+
+	placeFinderShapes(dc, e.options.drawFinder.WhiteSpace, finderSize, 2*modSize)
+}
+
+func placeFinderShapes(ctx *gg.Context, f shapes.FinderShapeDrawer, size float64, offset float64) {
+	offsetSize := size - offset*2
+	f(ctx, offset, offset, offsetSize)
+	f(ctx, offset, offset+float64(ctx.Width())-size, offsetSize)
+	f(ctx, offset+float64(ctx.Width())-size, offset, offsetSize)
 }
