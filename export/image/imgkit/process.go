@@ -48,7 +48,7 @@ func Gray(src image.Image) *image.Gray {
 
 func Scale(src image.Image, rect image.Rectangle, scale draw.Scaler) image.Image {
 	if scale == nil {
-		scale = draw.ApproxBiLinear
+		scale = draw.BiLinear
 	}
 
 	dst := image.NewRGBA(rect)

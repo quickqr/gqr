@@ -9,6 +9,8 @@ import (
 	"image/color"
 )
 
+const logoSizeRatio float64 = 0.2
+
 // Exporter exports gqr.Matrix to image.Image
 type Exporter struct {
 	options *imageOptions
@@ -39,17 +41,27 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	dc.Fill()
 
 	// Draw QR code data.
-	qrData := e.getQRImage(&mat, actualSize)
-	dc.DrawImage(qrData, o.quietZone, o.quietZone)
+	qr := e.drawQR(&mat, actualSize)
+	dc.DrawImage(qr, o.quietZone, o.quietZone)
 
 	// TODO: Add support for logo image background container
 	if o.logo != nil {
 		// logo will automatically rescale to the size of QR code
-		logoWidth := actualSize
-		scaled := imgkit.Scale(o.logo, image.Rect(0, 0, logoWidth, logoWidth), nil)
+		containerWidth := float64(actualSize) * logoSizeRatio
+		imageWidth := int(containerWidth)
 
+		if o.drawLogoContainer {
+			imageWidth = int(containerWidth * 0.8)
+
+			dc.SetColor(o.backgroundColor)
+			center := (float64(o.size) - containerWidth) / 2
+			dc.DrawRoundedRectangle(center, center, containerWidth, containerWidth, containerWidth*o.logoContainerBorderRadius)
+			dc.Fill()
+		}
+
+		scaled := imgkit.Scale(o.logo, image.Rect(0, 0, imageWidth, imageWidth), nil)
 		//should icon upper-left to start
-		dc.DrawImage(scaled, (o.size-logoWidth)/2, (o.size-logoWidth)/2)
+		dc.DrawImage(scaled, (o.size-imageWidth)/2, (o.size-imageWidth)/2)
 	}
 
 	return dc.Image()
@@ -61,9 +73,9 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 // - Support for gradient (direction, set of colors)
 // - Reimplement halftones capability from the original library
 
-// getQRImage draws pixel-perfect modules to avoid gaps between modules by ceiling width of module up and then
+// drawQR draws pixel-perfect modules to avoid gaps between modules by ceiling width of module up and then
 // scaling down image with data to actual QR width
-func (e *Exporter) getQRImage(mat *gqr.Matrix, requiredSize int) image.Image {
+func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 	// This line ceils division result without the need of converting everything to floats.
 	// https://stackoverflow.com/a/2745086
 	modSize := float64((e.options.size + mat.Width() - 1) / mat.Width())
@@ -85,7 +97,7 @@ func (e *Exporter) getQRImage(mat *gqr.Matrix, requiredSize int) image.Image {
 		Color:   e.options.foregroundColor,
 	}
 
-	ctx.SetColor(ctx.Color)
+	dc.SetColor(ctx.Color)
 	// iterate the matrix to Draw each pixel
 	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
 		// Finders are drawn separately
@@ -99,8 +111,8 @@ func (e *Exporter) getQRImage(mat *gqr.Matrix, requiredSize int) image.Image {
 		e.options.drawModuleFn(ctx)
 
 	})
-	//// Draw modules to screen
-	ctx.Fill()
+	// Draw modules to screen
+	dc.Fill()
 
 	e.drawFinders(dc, modSize, gap)
 
@@ -108,7 +120,6 @@ func (e *Exporter) getQRImage(mat *gqr.Matrix, requiredSize int) image.Image {
 }
 
 func (e *Exporter) drawFinders(dc *gg.Context, modSize float64, gap float64) {
-	dc.SetColor(e.options.foregroundColor)
 	finderSize := modSize * gqr.FINDER_SIZE
 	modSize -= gap
 

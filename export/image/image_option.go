@@ -32,9 +32,9 @@ type imageOptions struct {
 	foregroundColor color.RGBA `default:"color.RGB{1,1,1}"`
 
 	// logo this icon image would be put the center of QR Code image
-	logo image.Image
-	// TODO:
-	// logoContainer { color, size, border-radius }
+	logo                      image.Image
+	drawLogoContainer         bool
+	logoContainerBorderRadius float64
 
 	// size in pixel of output image
 	// Note: Actual size of the QR code will be equal to size - quietZone
