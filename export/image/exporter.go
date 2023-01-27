@@ -5,6 +5,7 @@ import (
 	"github.com/quickqr/gqr"
 	"github.com/quickqr/gqr/export/image/imgkit"
 	"github.com/quickqr/gqr/export/image/shapes"
+	"golang.org/x/image/draw"
 	"image"
 	"image/color"
 )
@@ -36,7 +37,8 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	dc := gg.NewContext(o.size, o.size)
 
 	// Draw background
-	dc.SetColor(o.backgroundColor)
+	//dc.SetColor(o.backgroundColor)
+
 	dc.DrawRectangle(0, 0, float64(o.size), float64(o.size))
 	dc.Fill()
 
@@ -53,7 +55,7 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 		if o.drawLogoContainer {
 			imageWidth = int(containerWidth * 0.8)
 
-			dc.SetColor(o.backgroundColor)
+			//dc.SetColor(o.backgroundColor)
 			center := (float64(o.size) - containerWidth) / 2
 			dc.DrawRoundedRectangle(center, center, containerWidth, containerWidth, containerWidth*o.logoContainerBorderRadius)
 			dc.Fill()
@@ -97,7 +99,29 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 		Color:   e.options.foregroundColor,
 	}
 
-	dc.SetColor(ctx.Color)
+	if e.options.gradientConfig != nil {
+		c := e.options.gradientConfig
+		size := float64(size)
+		grad := dirToGradient(c.direction, size, size)
+		l := len(c.colors)
+		lastIdx := l - 1
+
+		step := 1 / float64(l)
+
+		// Set first color at 0
+		grad.AddColorStop(0, c.colors[0])
+		// Colors between 0 and last
+		for i, v := range c.colors[1:lastIdx] {
+			grad.AddColorStop(step*float64(i+1), v)
+		}
+		// Set last color at 1
+		grad.AddColorStop(1, c.colors[lastIdx])
+
+		dc.SetFillStyle(grad)
+	} else {
+		dc.SetColor(ctx.Color)
+	}
+
 	// iterate the matrix to Draw each pixel
 	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
 		// Finders are drawn separately
@@ -116,7 +140,7 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 
 	e.drawFinders(dc, modSize, gap)
 
-	return imgkit.Scale(dc.Image(), image.Rect(0, 0, requiredSize, requiredSize), nil)
+	return imgkit.Scale(dc.Image(), image.Rect(0, 0, requiredSize, requiredSize), draw.ApproxBiLinear)
 }
 
 func (e *Exporter) drawFinders(dc *gg.Context, modSize float64, gap float64) {

@@ -2,6 +2,7 @@ package image
 
 import (
 	"fmt"
+	"github.com/fogleman/gg"
 	"github.com/quickqr/gqr"
 	"github.com/quickqr/gqr/export/image/shapes"
 	"image"
@@ -15,12 +16,38 @@ type ImageOption interface {
 var defaultImageOptions = imageOptions{
 	backgroundColor: color_WHITE, // white
 	foregroundColor: color_BLACK, // black
+	gradientConfig:  nil,
 	logo:            nil,
 	size:            512,
 	quietZone:       30,
 	moduleGap:       0,
 	drawModuleFn:    shapes.SquareModuleShape(),
 	drawFinder:      shapes.SquareFinderShape(),
+}
+
+type GradientDirection = int
+
+const (
+	// GradientDirectionTLBR - Top Left -> Bottom Right
+	GradientDirectionTLBR GradientDirection = iota
+	// GradientDirectionTRBL - Top Right -> Bottom Left
+	GradientDirectionTRBL GradientDirection = iota
+)
+
+type GradientConfig struct {
+	direction GradientDirection
+	colors    []color.Color
+}
+
+func dirToGradient(d GradientDirection, w float64, h float64) gg.Gradient {
+	switch d {
+	case GradientDirectionTLBR:
+		return gg.NewLinearGradient(0, 0, w, h)
+	case GradientDirectionTRBL:
+		return gg.NewLinearGradient(w, 0, 0, h)
+	}
+
+	return nil
 }
 
 // imageOptions to output QR code image
@@ -31,7 +58,10 @@ type imageOptions struct {
 	// foregroundColor is the foreground color of the QR code.
 	foregroundColor color.RGBA `default:"color.RGB{1,1,1}"`
 
+	gradientConfig *GradientConfig
+
 	// logo this icon image would be put the center of QR Code image
+	// TODO: Force color for container?
 	logo                      image.Image
 	drawLogoContainer         bool
 	logoContainerBorderRadius float64

@@ -55,6 +55,12 @@ func WithFgColor(c color.Color) ImageOption {
 	})
 }
 
+func WithGradient(d GradientDirection, colors ...color.Color) ImageOption {
+	return newFuncOption(func(oo *imageOptions) {
+		oo.gradientConfig = &GradientConfig{d, colors}
+	})
+}
+
 // WithFgColorRGBHex Hex string to set QR Color
 func WithFgColorRGBHex(hex string) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
