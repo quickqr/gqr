@@ -46,18 +46,19 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	qr := e.drawQR(&mat, actualSize)
 	dc.DrawImage(qr, o.quietZone, o.quietZone)
 
-	// TODO: Add support for logo image background container
+	// Fixme: pieces of modules can be seen behind space container
+	// TODO: find way to hide modules that are hidden by white space more than 80-90% (
 	if o.logo != nil {
 		// logo will automatically rescale to the size of QR code
 		containerWidth := float64(actualSize) * logoSizeRatio
 		imageWidth := int(containerWidth)
 
-		if o.drawLogoContainer {
+		if o.spaceAroundLogo {
 			imageWidth = int(containerWidth * 0.8)
 
 			//dc.SetColor(o.backgroundColor)
 			center := (float64(o.size) - containerWidth) / 2
-			dc.DrawRoundedRectangle(center, center, containerWidth, containerWidth, containerWidth*o.logoContainerBorderRadius)
+			dc.DrawRectangle(center, center, containerWidth, containerWidth)
 			dc.Fill()
 		}
 
@@ -81,14 +82,14 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 	// This line ceils division result without the need of converting everything to floats.
 	// https://stackoverflow.com/a/2745086
 	modSize := float64((e.options.size + mat.Width() - 1) / mat.Width())
-
 	size := int(modSize) * mat.Width()
-
 	// Apply gaps after real image size was calculated
 	gap := modSize * e.options.moduleGap
+	//whitespaceSize := float64(requiredSize) * logoSizeRatio
+	//center := requiredSize / 2
+	//emptyZone := (center - whitespaceSize)
 
 	dc := gg.NewContext(size, size)
-
 	// qrcode block draw context
 	ctx := &shapes.DrawContext{
 		Context: dc,
@@ -131,6 +132,10 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 
 		ctx.X = float64(x)*(ctx.ModSize) + gap/2
 		ctx.Y = float64(y)*(ctx.ModSize) + gap/2
+
+		if e.options.spaceAroundLogo {
+
+		}
 
 		e.options.drawModuleFn(ctx)
 

@@ -75,15 +75,10 @@ func WithLogo(img image.Image) ImageOption {
 	})
 }
 
-// WithLogoContainer adds container around logo with specified border radius
-func WithLogoContainer(borderRadius float64) ImageOption {
+// WithSpaceAroundLogo adds container around logo with specified border radius
+func WithSpaceAroundLogo() ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
-		if borderRadius > 0.5 || borderRadius < 0 {
-			return
-		}
-
-		oo.drawLogoContainer = true
-		oo.logoContainerBorderRadius = borderRadius
+		oo.spaceAroundLogo = true
 	})
 }
 

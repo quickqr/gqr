@@ -62,9 +62,8 @@ type imageOptions struct {
 
 	// logo this icon image would be put the center of QR Code image
 	// TODO: Force color for container?
-	logo                      image.Image
-	drawLogoContainer         bool
-	logoContainerBorderRadius float64
+	logo            image.Image
+	spaceAroundLogo bool
 
 	// size in pixel of output image
 	// Note: Actual size of the QR code will be equal to size - quietZone
