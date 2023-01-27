@@ -84,13 +84,12 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 	dc := gg.NewContext(size, size)
 
 	// qrcode block draw context
-	ctx := &shapes.DrawContext{
+	ctx := &shapes.ModuleDrawContext{
 		Context: dc,
 		X:       0.0,
 		Y:       0.0,
 		ModSize: modSize,
 		Gap:     gap,
-		Color:   e.options.foregroundColor,
 	}
 
 	if e.options.gradientConfig != nil {
@@ -113,7 +112,7 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 
 		dc.SetFillStyle(grad)
 	} else {
-		dc.SetColor(ctx.Color)
+		dc.SetColor(e.options.backgroundColor)
 	}
 
 	// iterate the matrix to Draw each pixel
