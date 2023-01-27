@@ -55,16 +55,17 @@ func WithFgColor(c color.Color) ImageOption {
 	})
 }
 
-func WithGradient(d GradientDirection, colors ...color.Color) ImageOption {
-	return newFuncOption(func(oo *imageOptions) {
-		oo.gradientConfig = &GradientConfig{d, colors}
-	})
-}
-
 // WithFgColorRGBHex Hex string to set QR Color
 func WithFgColorRGBHex(hex string) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.foregroundColor = parseFromHex(hex)
+	})
+}
+
+// WithGradient will use gradient to paint modules instead of foregroundColor (if set by WithFgColor or WithFgColorRGBHex)
+func WithGradient(d GradientDirection, colors ...color.Color) ImageOption {
+	return newFuncOption(func(oo *imageOptions) {
+		oo.gradientConfig = &GradientConfig{d, colors}
 	})
 }
 
@@ -113,9 +114,16 @@ func WithFinderShape(c shapes.FinderDrawConfig) ImageOption {
 	})
 }
 
-// WithModuleGap sets margin between modules in QR code.
+// WithModuleGap will set gaps between modules in percents relative to dynamic module size
+// (determined by quiet zone and image size)
+//
+// Note: gap should be in range [0; 1). Other values are ignored
 func WithModuleGap(gap float64) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
+		if gap < 0 || gap >= 1 {
+			return
+		}
+
 		oo.moduleGap = gap
 	})
 }
