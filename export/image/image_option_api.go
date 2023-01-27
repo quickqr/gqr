@@ -33,8 +33,8 @@ func WithBgColor(c color.Color) ImageOption {
 	})
 }
 
-// WithBgColorRGBHex background color
-func WithBgColorRGBHex(hex string) ImageOption {
+// WithBgColorHex background color
+func WithBgColorHex(hex string) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		if hex == "" {
 			return
@@ -55,14 +55,14 @@ func WithFgColor(c color.Color) ImageOption {
 	})
 }
 
-// WithFgColorRGBHex Hex string to set QR Color
-func WithFgColorRGBHex(hex string) ImageOption {
+// WithFgColorHex Hex string to set QR Color
+func WithFgColorHex(hex string) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.foregroundColor = parseFromHex(hex)
 	})
 }
 
-// WithGradient will use gradient to paint modules instead of foregroundColor (if set by WithFgColor or WithFgColorRGBHex)
+// WithGradient will use gradient to paint modules instead of foregroundColor (if set by WithFgColor or WithFgColorHex)
 func WithGradient(d GradientDirection, colors ...color.Color) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.gradientConfig = &GradientConfig{d, colors}
@@ -84,8 +84,13 @@ func WithSpaceAroundLogo() ImageOption {
 }
 
 // WithImageSize sets size of outputted image in pixels
+// Values less  than 1 are ignored
 func WithImageSize(size int) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
+		if size < 1 {
+			return
+		}
+
 		oo.size = size
 	})
 }

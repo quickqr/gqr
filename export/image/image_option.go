@@ -114,6 +114,8 @@ func parseFromHex(s string) color.RGBA {
 
 	var err error
 	switch len(s) {
+	case 9:
+		_, err = fmt.Sscanf(s, "#%02x%02x%02x%02x", &c.R, &c.G, &c.B, &c.A)
 	case 7:
 		_, err = fmt.Sscanf(s, "#%02x%02x%02x", &c.R, &c.G, &c.B)
 	case 4:
@@ -123,7 +125,7 @@ func parseFromHex(s string) color.RGBA {
 		c.G *= 17
 		c.B *= 17
 	default:
-		err = fmt.Errorf("invalid length, must be 7 or 4")
+		err = fmt.Errorf("invalid length, must be 9, 7 or 4")
 	}
 	if err != nil {
 		panic(err)
@@ -132,7 +134,6 @@ func parseFromHex(s string) color.RGBA {
 	return c
 }
 
-// TODO: Transparent color does not work.
 func parseFromColor(c color.Color) color.RGBA {
 	rgba, ok := c.(color.RGBA)
 	if ok {
