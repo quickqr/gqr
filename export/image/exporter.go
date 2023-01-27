@@ -122,8 +122,8 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 			return
 		}
 
-		ctx.X = float64(x*ctx.ModSize) + gap/2
-		ctx.Y = float64(y*ctx.ModSize) + gap/2
+		ctx.X = float64(x*ctx.ModSize) + ctx.Gap/2
+		ctx.Y = float64(y*ctx.ModSize) + ctx.Gap/2
 
 		if e.options.spaceAroundLogo && !emptyZone.Empty() {
 			x = int(ctx.X)
@@ -136,7 +136,6 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 		}
 
 		e.options.drawModuleFn(ctx)
-
 	})
 	// Draw modules to screen
 	dc.Fill()
