@@ -175,6 +175,7 @@ func (e *Exporter) drawFinders(dc *gg.Context, modSize float64, gap float64) {
 
 	// Placing outer shapes
 	placeFinderShapes(dc, e.options.drawFinder.Outer, finderSize, 0)
+	dc.Fill()
 
 	// Resetting mask to set inner shapes
 	mask.Clear()
@@ -182,6 +183,7 @@ func (e *Exporter) drawFinders(dc *gg.Context, modSize float64, gap float64) {
 
 	innerSize := finderSize / 2
 	placeFinderShapes(dc, e.options.drawFinder.WhiteSpace, innerSize, (finderSize-innerSize)/2)
+	dc.Fill()
 }
 
 func placeFinderShapes(ctx *gg.Context, f shapes.FinderShapeDrawer, size float64, offset float64) {
