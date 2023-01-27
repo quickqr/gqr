@@ -31,7 +31,7 @@ func NewExporter(opts ...ImageOption) Exporter {
 }
 
 // Export QR to Image.image
-func (e *Exporter) Export(mat gqr.Matrix) image.Image {
+func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	o := e.options
 	actualSize := o.size - o.quietZone*2
 	dc := gg.NewContext(o.size, o.size)
