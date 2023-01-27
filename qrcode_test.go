@@ -30,7 +30,7 @@ func Test_NewWithConfig_UnmatchedEncodeMode(t *testing.T) {
 	assert.Panics(t, func() {
 		_, err := NewWith("abcs", WithEncodingMode(EncModeAlphanumeric))
 		if err != nil {
-			t.Errorf("could not generate QRCode: %v", err)
+			t.Errorf("could not generate qrcode: %v", err)
 			t.Fail()
 		}
 	})
@@ -42,7 +42,7 @@ func Benchmark_NewQRCode_1KB(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_, err := New(text)
 		if err != nil {
-			b.Errorf("could not generate QRCode: %v", err)
+			b.Errorf("could not generate qrcode: %v", err)
 			b.Fail()
 		}
 	}

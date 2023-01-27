@@ -7,7 +7,7 @@ import (
 )
 
 func TestMask(t *testing.T) {
-	qrc := &QRCode{
+	qrc := &qrcode{
 		sourceText:     "baidu.com google.com qq.com sina.com apple.com",
 		encodingOption: DefaultEncodingOption(),
 	}

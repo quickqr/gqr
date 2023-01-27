@@ -9,10 +9,10 @@ import (
 	"sync"
 )
 
-// ModSize (and height) of finder in modules
+// FINDER_SIZE size of finder in modules
 const FINDER_SIZE = 7
 
-// New generate a QRCode struct to create
+// New generate a qrcode struct to create
 func New(text string) (*Matrix, error) {
 	dst := DefaultEncodingOption()
 	return build(text, dst)
@@ -20,8 +20,7 @@ func New(text string) (*Matrix, error) {
 
 // TODO: Use config struct instead of spread and fill defaults
 
-// NewWith generate a QRCode struct with
-// specified `ver`(QR version) and `ecLv`(Error Correction level)
+// NewWith generates Matrix that contains QR code with supplied data
 func NewWith(text string, opts ...EncodeOption) (*Matrix, error) {
 	dst := DefaultEncodingOption()
 	for _, opt := range opts {
@@ -32,7 +31,7 @@ func NewWith(text string, opts ...EncodeOption) (*Matrix, error) {
 }
 
 func build(text string, option *encodingOption) (*Matrix, error) {
-	qrc := &QRCode{
+	qrc := &qrcode{
 		sourceText:     text,
 		sourceRawBytes: []byte(text),
 		dataBSet:       nil,
@@ -42,7 +41,7 @@ func build(text string, option *encodingOption) (*Matrix, error) {
 		encodingOption: option,
 		encoder:        nil,
 	}
-	// initialize QRCode instance
+	// initialize qrcode instance
 	if err := qrc.init(); err != nil {
 		return nil, err
 	}
@@ -52,9 +51,8 @@ func build(text string, option *encodingOption) (*Matrix, error) {
 	return qrc.mat, nil
 }
 
-// QRCode contains fields to generate QRCode matrix, outputImageOptions to Draw image,
-// etc.
-type QRCode struct {
+// qrcode contains fields to generate qrcode matrix
+type qrcode struct {
 	sourceText     string // sourceText input text
 	sourceRawBytes []byte // raw Data to transfer
 
@@ -67,7 +65,7 @@ type QRCode struct {
 	v              version  // indicate the QR version to encode.
 }
 
-func (q *QRCode) Dimension() int {
+func (q *qrcode) Dimension() int {
 	if q.mat == nil {
 		return 0
 	}
@@ -75,8 +73,8 @@ func (q *QRCode) Dimension() int {
 	return q.mat.Width()
 }
 
-// init fill QRCode instance from settings and sourceText.
-func (q *QRCode) init() (err error) {
+// init fill qrcode instance from settings and sourceText.
+func (q *qrcode) init() (err error) {
 	// choose encode mode (num, alpha num, byte, Japanese)
 	if q.encodingOption.EncMode == EncModeAuto {
 		q.encodingOption.EncMode = analyzeEncodeModeFromRaw(q.sourceRawBytes)
@@ -117,7 +115,7 @@ func (q *QRCode) init() (err error) {
 }
 
 // calcVersion
-func (q *QRCode) calcVersion() (ver *version, err error) {
+func (q *qrcode) calcVersion() (ver *version, err error) {
 	var needAnalyze = true
 
 	opt := q.encodingOption
@@ -144,7 +142,7 @@ func (q *QRCode) calcVersion() (ver *version, err error) {
 }
 
 // applyEncoder
-func (q *QRCode) applyEncoder() error {
+func (q *qrcode) applyEncoder() error {
 	q.encoder = newEncoder(q.encodingOption.EncMode, q.encodingOption.EcLevel, q.v)
 
 	return nil
@@ -152,7 +150,7 @@ func (q *QRCode) applyEncoder() error {
 
 // dataEncoding ref to:
 // https://www.thonky.com/qr-code-tutorial/data-encoding
-func (q *QRCode) dataEncoding() (blocks []dataBlock, err error) {
+func (q *qrcode) dataEncoding() (blocks []dataBlock, err error) {
 	var (
 		bset *binary.Binary
 	)
@@ -200,7 +198,7 @@ type ecBlock struct {
 
 // errorCorrectionEncoding ref to:
 // https://www.thonky.com/qr-code-tutorial /error-correction-coding
-func (q *QRCode) errorCorrectionEncoding(dataBlocks []dataBlock) (blocks []ecBlock, err error) {
+func (q *qrcode) errorCorrectionEncoding(dataBlocks []dataBlock) (blocks []ecBlock, err error) {
 	// start, end, blockID := 0, 0, 0
 	blocks = make([]ecBlock, q.v.TotalNumBlocks())
 	for idx, b := range dataBlocks {
@@ -216,7 +214,7 @@ func (q *QRCode) errorCorrectionEncoding(dataBlocks []dataBlock) (blocks []ecBlo
 }
 
 // arrangeBits ... and save into dataBSet
-func (q *QRCode) arrangeBits(dataBlocks []dataBlock, ecBlocks []ecBlock) {
+func (q *qrcode) arrangeBits(dataBlocks []dataBlock, ecBlocks []ecBlock) {
 	if debugEnabled() {
 		log.Println("arrangeBits called, before")
 		for i := 0; i < len(ecBlocks); i++ {
@@ -300,7 +298,7 @@ func (q *QRCode) arrangeBits(dataBlocks []dataBlock, ecBlocks []ecBlock) {
 
 // prefillMatrix with version info: ref to:
 // http://www.thonky.com/qr-code-tutorial/module-placement-matrix
-func (q *QRCode) prefillMatrix() {
+func (q *qrcode) prefillMatrix() {
 	dimension := q.v.Dimension()
 	if q.mat == nil {
 		q.mat = newMatrix(dimension, dimension)
@@ -504,7 +502,7 @@ func reserveVersionBlock(m *Matrix, dimension int) {
 // fillDataBinary fill q.dataBSet binary stream into q.mat.
 // References:
 //   - http://www.thonky.com/qr-code-tutorial/module-placement-matrix#Place-the-Data-Bits
-func (q *QRCode) fillDataBinary(m *Matrix, dimension int) {
+func (q *qrcode) fillDataBinary(m *Matrix, dimension int) {
 	var (
 		// x always move from right, left right loop (2 rows), y move upward, downward, upward loop
 		x, y      = dimension - 1, dimension - 1
@@ -578,7 +576,7 @@ func (q *QRCode) fillDataBinary(m *Matrix, dimension int) {
 
 // draw from bitset to matrix.Matrix, calculate all mask modula score,
 // then decide which mask to use according to the mask's score (the lowest one).
-func (q *QRCode) masking() {
+func (q *qrcode) masking() {
 	type maskScore struct {
 		Score int
 		Idx   int
@@ -652,7 +650,7 @@ func (q *QRCode) masking() {
 }
 
 // all mask patter and check the maskScore choose the lowest mask result
-func (q *QRCode) xorMask(m *Matrix, mask *mask) {
+func (q *qrcode) xorMask(m *Matrix, mask *mask) {
 	mask.mat.iter(IterDirection_COLUMN, func(x, y int, v qrvalue) {
 		// skip the empty place
 		if v.qrtype() == QRType_INIT {
@@ -665,7 +663,7 @@ func (q *QRCode) xorMask(m *Matrix, mask *mask) {
 
 // fillVersionInfo ref to:
 // https://www.thonky.com/qr-code-tutorial/format-version-tables
-func (q *QRCode) fillVersionInfo(m *Matrix, dimension int) {
+func (q *qrcode) fillVersionInfo(m *Matrix, dimension int) {
 	bin := q.v.verInfo()
 
 	// from high bit to lowest
@@ -687,7 +685,7 @@ func (q *QRCode) fillVersionInfo(m *Matrix, dimension int) {
 
 // fill format info ref to:
 // https://www.thonky.com/qr-code-tutorial/format-version-tables
-func (q *QRCode) fillFormatInfo(m *Matrix, mode maskPatternModulo, dimension int) {
+func (q *qrcode) fillFormatInfo(m *Matrix, mode maskPatternModulo, dimension int) {
 	fmtBSet := q.v.formatInfo(int(mode))
 	debugLogf("fmtBitSet: %s", fmtBSet.String())
 	var (
