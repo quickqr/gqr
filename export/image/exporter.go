@@ -37,7 +37,7 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	dc := gg.NewContext(o.size, o.size)
 
 	// Draw background
-	//dc.SetColor(o.backgroundColor)
+	dc.SetColor(o.backgroundColor)
 
 	dc.DrawRectangle(0, 0, float64(o.size), float64(o.size))
 	dc.Fill()
@@ -49,21 +49,15 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	// Fixme: pieces of modules can be seen behind space container
 	// TODO: find way to hide modules that are hidden by white space more than 80-90% (
 	if o.logo != nil {
-		// logo will automatically rescale to the size of QR code
+		// rescale logo relative to size of the QR code
 		containerWidth := float64(actualSize) * logoSizeRatio
+
 		imageWidth := int(containerWidth)
-
 		if o.spaceAroundLogo {
-			imageWidth = int(containerWidth * 0.8)
-
-			//dc.SetColor(o.backgroundColor)
-			center := (float64(o.size) - containerWidth) / 2
-			dc.DrawRectangle(center, center, containerWidth, containerWidth)
-			dc.Fill()
+			imageWidth = int(containerWidth * 0.9)
 		}
 
 		scaled := imgkit.Scale(o.logo, image.Rect(0, 0, imageWidth, imageWidth), nil)
-		//should icon upper-left to start
 		dc.DrawImage(scaled, (o.size-imageWidth)/2, (o.size-imageWidth)/2)
 	}
 
@@ -81,15 +75,14 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 	// This line ceils division result without the need of converting everything to floats.
 	// https://stackoverflow.com/a/2745086
-	modSize := float64((e.options.size + mat.Width() - 1) / mat.Width())
-	size := int(modSize) * mat.Width()
+	modSize := (e.options.size + mat.Width() - 1) / mat.Width()
+	size := modSize * mat.Width()
 	// Apply gaps after real image size was calculated
-	gap := modSize * e.options.moduleGap
-	//whitespaceSize := float64(requiredSize) * logoSizeRatio
-	//center := requiredSize / 2
-	//emptyZone := (center - whitespaceSize)
+	gap := float64(modSize) * e.options.moduleGap
+	var emptyZone = e.getEmptyZone(size)
 
 	dc := gg.NewContext(size, size)
+
 	// qrcode block draw context
 	ctx := &shapes.DrawContext{
 		Context: dc,
@@ -130,10 +123,16 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 			return
 		}
 
-		ctx.X = float64(x)*(ctx.ModSize) + gap/2
-		ctx.Y = float64(y)*(ctx.ModSize) + gap/2
+		ctx.X = float64(x*ctx.ModSize) + gap/2
+		ctx.Y = float64(y*ctx.ModSize) + gap/2
 
-		if e.options.spaceAroundLogo {
+		if e.options.spaceAroundLogo && !emptyZone.Empty() {
+			x = int(ctx.X)
+			y = int(ctx.Y)
+
+			if image.Rect(x, y, x+modSize, y+modSize).Overlaps(emptyZone) {
+				return
+			}
 
 		}
 
@@ -143,9 +142,23 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 	// Draw modules to screen
 	dc.Fill()
 
-	e.drawFinders(dc, modSize, gap)
+	e.drawFinders(dc, float64(modSize), gap)
 
 	return imgkit.Scale(dc.Image(), image.Rect(0, 0, requiredSize, requiredSize), draw.ApproxBiLinear)
+}
+
+func (e *Exporter) getEmptyZone(qrSize int) image.Rectangle {
+	if e.options.spaceAroundLogo {
+		center := qrSize / 2
+		// Get half of the empty zone size
+		halfSize := int(float64(qrSize) * logoSizeRatio / 2)
+		start := center - halfSize
+		end := center + halfSize
+
+		return image.Rect(start, start, end, end)
+	}
+
+	return image.Rect(0, 0, 0, 0)
 }
 
 func (e *Exporter) drawFinders(dc *gg.Context, modSize float64, gap float64) {

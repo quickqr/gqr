@@ -10,7 +10,7 @@ type DrawContext struct {
 	*gg.Context
 
 	X, Y    float64
-	ModSize float64
+	ModSize int
 	Gap     float64
 
 	Color color.Color
@@ -35,7 +35,7 @@ func RoundedModuleShape(borderRadius float64) ModuleDrawer {
 
 	// TODO: Implement "connectNeighbours" feature
 	return func(ctx *DrawContext) {
-		size := ctx.ModSize - ctx.Gap
+		size := float64(ctx.ModSize) - ctx.Gap
 		ctx.DrawRoundedRectangle(ctx.X, ctx.Y, size, size, size*borderRadius)
 	}
 }

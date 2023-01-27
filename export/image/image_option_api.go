@@ -68,14 +68,14 @@ func WithFgColorRGBHex(hex string) ImageOption {
 	})
 }
 
-// WithLogo embeds img at the center of the image
+// WithLogo embeds image at the center of the QR
 func WithLogo(img image.Image) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.logo = img
 	})
 }
 
-// WithSpaceAroundLogo adds container around logo with specified border radius
+// WithSpaceAroundLogo adds empty space behind logo so it's not drawn on top of modules
 func WithSpaceAroundLogo() ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.spaceAroundLogo = true
