@@ -25,16 +25,16 @@ func Test_hexToRGBA(t *testing.T) {
 			args: args{s: "#112"},
 			want: color.RGBA{R: 17, G: 17, B: 34, A: 255},
 		},
-		//{
-		//	name: "case 3",
-		//	args: args{s: "#1122331"},
-		//	want: color.RGBA{},
-		//}, // panic
-		//{
-		//	name: "case 4",
-		//	args: args{s: "#11"},
-		//	want: color.RGBA{},
-		//}, // panic
+		{
+			name: "case 3",
+			args: args{s: "#ffffffff"},
+			want: color.RGBA{R: 255, G: 255, B: 255, A: 255},
+		},
+		{
+			name: "case 4",
+			args: args{s: "#ffffff00"},
+			want: color.RGBA{255, 255, 255, 0},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
