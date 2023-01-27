@@ -168,7 +168,7 @@ func (e *Exporter) drawFinders(dc *gg.Context, modSize float64, gap float64) {
 	// Creating mask to cut out inside of outer shapes
 	mask := gg.NewContext(dc.Width(), dc.Height())
 	mask.SetColor(color.Black)
-	placeFinderShapes(mask, e.options.drawFinder.WhiteSpace, finderSize, modSize)
+	placeFinderShapes(mask, e.options.drawFinder.WhiteSpace, finderSize-modSize*2, modSize)
 	mask.Fill()
 	_ = dc.SetMask(mask.AsMask())
 	dc.InvertMask()
@@ -180,12 +180,17 @@ func (e *Exporter) drawFinders(dc *gg.Context, modSize float64, gap float64) {
 	mask.Clear()
 	_ = dc.SetMask(mask.AsMask())
 
-	placeFinderShapes(dc, e.options.drawFinder.WhiteSpace, finderSize, 2*modSize)
+	innerSize := finderSize / 2
+	placeFinderShapes(dc, e.options.drawFinder.WhiteSpace, innerSize, (finderSize-innerSize)/2)
 }
 
 func placeFinderShapes(ctx *gg.Context, f shapes.FinderShapeDrawer, size float64, offset float64) {
-	offsetSize := size - offset*2
-	f(ctx, offset, offset, offsetSize)
-	f(ctx, offset, offset+float64(ctx.Width())-size, offsetSize)
-	f(ctx, offset+float64(ctx.Width())-size, offset, offsetSize)
+	finderSize := size
+
+	// Top Left
+	f(ctx, offset, offset, finderSize)
+	// Top right
+	f(ctx, -offset+float64(ctx.Width())-size, offset, finderSize)
+	// Bottom left
+	f(ctx, offset, -offset+float64(ctx.Width())-size, finderSize)
 }

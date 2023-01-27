@@ -76,7 +76,7 @@ func WithLogo(img image.Image) ImageOption {
 	})
 }
 
-// WithSpaceAroundLogo adds empty space behind logo so it's not drawn on top of modules
+// WithSpaceAroundLogo adds empty space behind logo, so it's not drawn on top of modules
 func WithSpaceAroundLogo() ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
 		oo.spaceAroundLogo = true
