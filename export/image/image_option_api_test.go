@@ -30,7 +30,7 @@ func Test_BgColor_FgColor(t *testing.T) {
 }
 
 func Test_defaultOutputOption(t *testing.T) {
-	oo := &defaultImageOptions
+	oo := defaultImageOptions
 
 	// Apply
 	rgba := color.RGBA{
@@ -39,7 +39,7 @@ func Test_defaultOutputOption(t *testing.T) {
 		B: 123,
 		A: 123,
 	}
-	WithBgColor(rgba).apply(oo)
+	WithBgColor(rgba).apply(&oo)
 	// assert
 	assert.Equal(t, rgba, oo.backgroundColor)
 
@@ -49,9 +49,9 @@ func Test_defaultOutputOption(t *testing.T) {
 }
 
 func Test_WithQuietZoneSize(t *testing.T) {
-	oo := &defaultImageOptions
+	oo := defaultImageOptions
 
 	// zero parameter
-	WithQuietZone(50).apply(oo)
-	assert.Equal(t, 500, oo.quietZone)
+	WithQuietZone(50).apply(&oo)
+	assert.Equal(t, 50, oo.quietZone)
 }
