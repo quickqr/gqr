@@ -112,7 +112,7 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 
 		dc.SetFillStyle(grad)
 	} else {
-		dc.SetColor(e.options.backgroundColor)
+		dc.SetColor(e.options.foregroundColor)
 	}
 
 	// iterate the matrix to Draw each pixel
