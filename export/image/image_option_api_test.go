@@ -7,7 +7,7 @@ import (
 )
 
 func Test_BgColor_FgColor(t *testing.T) {
-	oo := &defaultImageOptions
+	oo := &DefaultImageOptions
 
 	// check
 	assert.Equal(t, color_WHITE, oo.backgroundColor)
@@ -29,8 +29,33 @@ func Test_BgColor_FgColor(t *testing.T) {
 	assert.Equal(t, color_BLACK, oo.foregroundColor)
 }
 
+func Test_WithImageSize(t *testing.T) {
+	oo := DefaultImageOptions
+
+	WithImageSize(20).apply(&oo)
+	// assert
+	assert.Equal(t, 20, oo.size)
+
+	WithImageSize(-10).apply(&oo)
+	// assert ignore invalid
+	assert.Equal(t, 20, oo.size)
+}
+
+func Test_WithModuleGap(t *testing.T) {
+	oo := DefaultImageOptions
+
+	WithModuleGap(0.5).apply(&oo)
+	// assert
+	assert.Equal(t, 0.5, oo.moduleGap)
+
+	WithModuleGap(-1).apply(&oo)
+	WithModuleGap(2).apply(&oo)
+	// assert ignore invalid
+	assert.Equal(t, 0.5, oo.moduleGap)
+}
+
 func Test_defaultOutputOption(t *testing.T) {
-	oo := defaultImageOptions
+	oo := DefaultImageOptions
 
 	// Apply
 	rgba := color.RGBA{
@@ -44,12 +69,11 @@ func Test_defaultOutputOption(t *testing.T) {
 	assert.Equal(t, rgba, oo.backgroundColor)
 
 	// check default
-	oo2 := defaultImageOptions
-	assert.NotEqual(t, oo2.backgroundColor, oo.backgroundColor)
+	assert.NotEqual(t, DefaultImageOptions.backgroundColor, oo.backgroundColor)
 }
 
 func Test_WithQuietZoneSize(t *testing.T) {
-	oo := defaultImageOptions
+	oo := DefaultImageOptions
 
 	// zero parameter
 	WithQuietZone(50).apply(&oo)

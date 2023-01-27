@@ -13,7 +13,7 @@ type ImageOption interface {
 	apply(o *imageOptions)
 }
 
-var defaultImageOptions = imageOptions{
+var DefaultImageOptions = imageOptions{
 	backgroundColor: color_WHITE, // white
 	foregroundColor: color_BLACK, // black
 	gradientConfig:  nil,
