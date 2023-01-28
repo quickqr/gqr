@@ -34,13 +34,13 @@ go get -u github.com/quickqr/gqr/export/image
 package main
 
 import (
-	"github.com/quickqr/gqr"
-	export "github.com/quickqr/gqr/export/image"
-	"github.com/quickqr/gqr/export/image/shapes"
-	"image"
-	"image/png"
-	"log"
-	"os"
+  "github.com/quickqr/gqr"
+  export "github.com/quickqr/gqr/export/image"
+  "github.com/quickqr/gqr/export/image/shapes"
+  "image"
+  "image/png"
+  "log"
+  "os"
 )
 
 func main() {
@@ -59,26 +59,26 @@ func main() {
   img := export.
           NewExporter(
             export.WithBgColorHex("#1f1f1f"),
-		  
+
             export.WithLogo(logo),
             export.WithSpaceAroundLogo(),
-			
+
             export.WithFinderShape(shapes.RoundedFinderShape(0.5)),
             export.WithModuleShape(shapes.RoundedModuleShape(0.5)),
 
-			// Apply gap between modules
+            // Apply gap between modules
             export.WithModuleGap(0.1),
-			// Size of the outputted image in pixels
+            // Size of the outputted image in pixels
             export.WithImageSize(512),
-			// Padding around QR code 
-			// Note: actual QR code size will be (image size - quiet zone * 2)
+            // Padding around QR code
+            // Note: actual QR code size will be (image size - quiet zone * 2)
             export.WithQuietZone(30),
 
-			// Gradient for foreground with direction from Top Right to Bottom Left
+            // Gradient for foreground with direction from Top Right to Bottom Left
             export.WithGradient(export.GradientDirectionTRBL,
               export.ParseFromHex("#cc33ff"),
               export.ParseFromHex("#ff9900"),
-			  // You also can use any color.Color instance
+              // You also can use any color.Color instance
             ),
           ).
     Export(*qr)
