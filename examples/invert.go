@@ -12,7 +12,7 @@ import (
 
 func main() {
 	qr, e := gqr.NewWith(
-		"https://github.com/quickqr/gqr",
+		"Hello!",
 	)
 
 	if e != nil {
@@ -24,6 +24,7 @@ func main() {
 		NewExporter(
 			export.WithBgColor(color.Black),
 			export.WithFgColor(color.White),
+			export.WithQuietZone(100),
 			// Works better with rounded module shapes
 			export.WithModuleGap(0.1),
 			export.WithModuleShape(shapes.RoundedModuleShape(0.2)),
