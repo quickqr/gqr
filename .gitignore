@@ -5,10 +5,6 @@ js/
 .idea/
 .vscode/
 
-# example/
-*.png
-default.jpeg
-# *.json
 *.log
 .DS_store
 tmp.png
