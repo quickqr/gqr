@@ -7,7 +7,6 @@ import (
 	"github.com/quickqr/gqr/export/image/shapes"
 	"golang.org/x/image/draw"
 	"image"
-	"image/color"
 )
 
 const logoSizeRatio float64 = 0.2
@@ -38,7 +37,6 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 
 	// Draw background
 	dc.SetColor(o.backgroundColor)
-
 	dc.DrawRectangle(0, 0, float64(o.size), float64(o.size))
 	dc.Fill()
 
@@ -62,7 +60,6 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	}
 
 	return dc.Image()
-
 }
 
 // TODO:
@@ -142,7 +139,7 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 
 	e.drawFinders(dc, float64(modSize), gap)
 
-	return imgkit.Scale(dc.Image(), image.Rect(0, 0, requiredSize, requiredSize), draw.ApproxBiLinear)
+	return imgkit.Scale(dc.Image(), image.Rect(0, 0, requiredSize, requiredSize), draw.NearestNeighbor)
 }
 
 func (e *Exporter) getEmptyZone(qrSize int) image.Rectangle {
@@ -162,35 +159,28 @@ func (e *Exporter) getEmptyZone(qrSize int) image.Rectangle {
 func (e *Exporter) drawFinders(dc *gg.Context, modSize float64, gap float64) {
 	finderSize := modSize * gqr.FINDER_SIZE
 	modSize -= gap
-
-	// Creating mask to cut out inside of outer shapes
-	mask := gg.NewContext(dc.Width(), dc.Height())
-	mask.SetColor(color.Black)
-	placeFinderShapes(mask, e.options.drawFinder.WhiteSpace, finderSize-modSize*2, modSize)
-	mask.Fill()
-	_ = dc.SetMask(mask.AsMask())
-	dc.InvertMask()
+	// This will not draw second WhiteSpace and cut a "hole" of specified shape inside drawFinder.Outer
+	dc.SetFillRuleEvenOdd()
 
 	// Placing outer shapes
-	placeFinderShapes(dc, e.options.drawFinder.Outer, finderSize, 0)
-	dc.Fill()
+	placeFinderShapes(dc, e.options.drawFinder.Outer, finderSize, modSize, 0)
 
-	// Resetting mask to set inner shapes
-	mask.Clear()
-	_ = dc.SetMask(mask.AsMask())
+	// Placing space between outer and inner shapes
+	placeFinderShapes(dc, e.options.drawFinder.WhiteSpace, finderSize-modSize*2, modSize, modSize)
 
 	innerSize := finderSize / 2
-	placeFinderShapes(dc, e.options.drawFinder.WhiteSpace, innerSize, (finderSize-innerSize)/2)
+	placeFinderShapes(dc, e.options.drawFinder.Inner, innerSize, modSize, (finderSize-innerSize)/2)
+
 	dc.Fill()
 }
 
-func placeFinderShapes(ctx *gg.Context, f shapes.FinderShapeDrawer, size float64, offset float64) {
+func placeFinderShapes(ctx *gg.Context, f shapes.FinderShapeDrawer, size float64, modSize float64, offset float64) {
 	finderSize := size
 
 	// Top Left
-	f(ctx, offset, offset, finderSize)
+	f(ctx, offset, offset, finderSize, modSize)
 	// Top right
-	f(ctx, -offset+float64(ctx.Width())-size, offset, finderSize)
+	f(ctx, -offset+float64(ctx.Width())-size, offset, finderSize, modSize)
 	// Bottom left
-	f(ctx, offset, -offset+float64(ctx.Width())-size, finderSize)
+	f(ctx, offset, -offset+float64(ctx.Width())-size, finderSize, modSize)
 }
