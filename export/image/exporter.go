@@ -139,7 +139,7 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 
 	e.drawFinders(dc, float64(modSize), gap)
 
-	return imgkit.Scale(dc.Image(), image.Rect(0, 0, requiredSize, requiredSize), draw.NearestNeighbor)
+	return imgkit.Scale(dc.Image(), image.Rect(0, 0, requiredSize, requiredSize), draw.ApproxBiLinear)
 }
 
 func (e *Exporter) getEmptyZone(qrSize int) image.Rectangle {
