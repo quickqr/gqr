@@ -143,7 +143,7 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 }
 
 func (e *Exporter) getEmptyZone(qrSize int) image.Rectangle {
-	if e.options.spaceAroundLogo {
+	if e.options.logo != nil && e.options.spaceAroundLogo {
 		center := qrSize / 2
 		// Get half of the empty zone size
 		halfSize := int(float64(qrSize) * logoSizeRatio / 2)
