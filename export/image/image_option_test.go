@@ -38,8 +38,8 @@ func Test_hexToRGBA(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := parseFromHex(tt.args.s); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("parseFromHex() = %v, want %v", got, tt.want)
+			if got := ParseFromHex(tt.args.s); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ParseFromHex() = %v, want %v", got, tt.want)
 			}
 		})
 	}

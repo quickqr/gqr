@@ -83,28 +83,26 @@ type imageOptions struct {
 }
 
 var (
-	color_WHITE = parseFromHex("#ffffff")
-	color_BLACK = parseFromHex("#000000")
+	color_WHITE = ParseFromHex("#ffffff")
+	color_BLACK = ParseFromHex("#000000")
 )
 
 var (
 	// _STATE_MAPPING mapping matrix.State to color.RGBA in debug mode.
 	_STATE_MAPPING = map[gqr.QRType]color.RGBA{
-		gqr.QRType_INIT:     parseFromHex("#ffffff"), // [bg]
-		gqr.QRType_DATA:     parseFromHex("#cdc9c3"), // [bg]
-		gqr.QRType_VERSION:  parseFromHex("#000000"), // [fg]
-		gqr.QRType_FORMAT:   parseFromHex("#444444"), // [fg]
-		gqr.QRType_FINDER:   parseFromHex("#555555"), // [fg]
-		gqr.QRType_DARK:     parseFromHex("#2BA859"), // [fg]
-		gqr.QRType_SPLITTER: parseFromHex("#2BA859"), // [fg]
-		gqr.QRType_TIMING:   parseFromHex("#000000"), // [fg]
+		gqr.QRType_INIT:     ParseFromHex("#ffffff"), // [bg]
+		gqr.QRType_DATA:     ParseFromHex("#cdc9c3"), // [bg]
+		gqr.QRType_VERSION:  ParseFromHex("#000000"), // [fg]
+		gqr.QRType_FORMAT:   ParseFromHex("#444444"), // [fg]
+		gqr.QRType_FINDER:   ParseFromHex("#555555"), // [fg]
+		gqr.QRType_DARK:     ParseFromHex("#2BA859"), // [fg]
+		gqr.QRType_SPLITTER: ParseFromHex("#2BA859"), // [fg]
+		gqr.QRType_TIMING:   ParseFromHex("#000000"), // [fg]
 	}
 )
 
-// TODO: Add support for length of 3, 6 and 8 (with alpha)
-
-// parseFromHex convert hex string into color.RGBA
-func parseFromHex(s string) color.RGBA {
+// ParseFromHex convert hex string into color.RGBA
+func ParseFromHex(s string) color.RGBA {
 	c := color.RGBA{
 		R: 0,
 		G: 0,

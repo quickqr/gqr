@@ -40,7 +40,7 @@ func WithBgColorHex(hex string) ImageOption {
 			return
 		}
 
-		oo.backgroundColor = parseFromHex(hex)
+		oo.backgroundColor = ParseFromHex(hex)
 	})
 }
 
@@ -58,7 +58,7 @@ func WithFgColor(c color.Color) ImageOption {
 // WithFgColorHex Hex string to set QR Color
 func WithFgColorHex(hex string) ImageOption {
 	return newFuncOption(func(oo *imageOptions) {
-		oo.foregroundColor = parseFromHex(hex)
+		oo.foregroundColor = ParseFromHex(hex)
 	})
 }
 

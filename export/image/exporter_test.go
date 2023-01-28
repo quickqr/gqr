@@ -8,7 +8,7 @@ import (
 func Test_ApplyOptions(t *testing.T) {
 	desired := imageOptions{
 		backgroundColor: color_BLACK,               // white
-		foregroundColor: parseFromHex("#1f1f1f00"), // black
+		foregroundColor: ParseFromHex("#1f1f1f00"), // black
 		size:            1024,
 		quietZone:       50,
 		moduleGap:       0.2,
