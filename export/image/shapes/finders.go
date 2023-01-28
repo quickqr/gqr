@@ -37,8 +37,7 @@ func RoundedFinderShape(borderRadius float64) FinderDrawConfig {
 	}
 
 	draw := func(ctx *gg.Context, x float64, y float64, size float64, modSize float64) {
-		size -= modSize
-		ctx.DrawRoundedRectangle(x+modSize/2, y+modSize/2, size, size, size*borderRadius)
+		ctx.DrawRoundedRectangle(x, y, size, size, size*borderRadius)
 	}
 
 	return FinderDrawConfig{draw, draw, draw}
