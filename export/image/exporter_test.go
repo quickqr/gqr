@@ -6,7 +6,7 @@ import (
 )
 
 func Test_ApplyOptions(t *testing.T) {
-	desired := imageOptions{
+	desired := exportOptions{
 		backgroundColor: color_BLACK,               // white
 		foregroundColor: ParseFromHex("#1f1f1f00"), // black
 		size:            1024,

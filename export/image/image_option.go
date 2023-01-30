@@ -3,17 +3,16 @@ package image
 import (
 	"fmt"
 	"github.com/fogleman/gg"
-	"github.com/quickqr/gqr"
 	"github.com/quickqr/gqr/export/image/shapes"
 	"image"
 	"image/color"
 )
 
-type ImageOption interface {
-	apply(o *imageOptions)
+type ExportOption interface {
+	apply(o *exportOptions)
 }
 
-var DefaultImageOptions = imageOptions{
+var DefaultImageOptions = exportOptions{
 	backgroundColor: color_WHITE, // white
 	foregroundColor: color_BLACK, // black
 	gradientConfig:  nil,
@@ -28,10 +27,10 @@ var DefaultImageOptions = imageOptions{
 type GradientDirection = int
 
 const (
-	// GradientDirectionTLBR - Top Left -> Bottom Right
-	GradientDirectionTLBR GradientDirection = iota
-	// GradientDirectionTRBL - Top Right -> Bottom Left
-	GradientDirectionTRBL GradientDirection = iota
+	// GradientDirectionLTR - Top Left -> Bottom Right
+	GradientDirectionLTR GradientDirection = iota
+	// GradientDirectionRTL - Top Right -> Bottom Left
+	GradientDirectionRTL GradientDirection = iota
 )
 
 type GradientConfig struct {
@@ -41,22 +40,22 @@ type GradientConfig struct {
 
 func dirToGradient(d GradientDirection, w float64, h float64) gg.Gradient {
 	switch d {
-	case GradientDirectionTLBR:
+	case GradientDirectionLTR:
 		return gg.NewLinearGradient(0, 0, w, h)
-	case GradientDirectionTRBL:
+	case GradientDirectionRTL:
 		return gg.NewLinearGradient(w, 0, 0, h)
 	}
 
 	return nil
 }
 
-// imageOptions to output QR code image
-type imageOptions struct {
+// exportOptions to output QR code image
+type exportOptions struct {
 	// backgroundColor is the background color of the QR code image.
-	backgroundColor color.RGBA `default:"color.RGB{0, 0, 0}"`
+	backgroundColor color.RGBA
 
 	// foregroundColor is the foreground color of the QR code.
-	foregroundColor color.RGBA `default:"color.RGB{1,1,1}"`
+	foregroundColor color.RGBA
 
 	gradientConfig *GradientConfig
 
@@ -74,6 +73,7 @@ type imageOptions struct {
 
 	moduleGap float64
 
+	// TODO: Add better support of customization with single context (all colors, gaps, etc.) for both module and finders drawers
 	drawModuleFn shapes.ModuleDrawer
 	drawFinder   shapes.FinderDrawConfig
 
@@ -85,20 +85,6 @@ type imageOptions struct {
 var (
 	color_WHITE = ParseFromHex("#ffffff")
 	color_BLACK = ParseFromHex("#000000")
-)
-
-var (
-	// _STATE_MAPPING mapping matrix.State to color.RGBA in debug mode.
-	_STATE_MAPPING = map[gqr.QRType]color.RGBA{
-		gqr.QRType_INIT:     ParseFromHex("#ffffff"), // [bg]
-		gqr.QRType_DATA:     ParseFromHex("#cdc9c3"), // [bg]
-		gqr.QRType_VERSION:  ParseFromHex("#000000"), // [fg]
-		gqr.QRType_FORMAT:   ParseFromHex("#444444"), // [fg]
-		gqr.QRType_FINDER:   ParseFromHex("#555555"), // [fg]
-		gqr.QRType_DARK:     ParseFromHex("#2BA859"), // [fg]
-		gqr.QRType_SPLITTER: ParseFromHex("#2BA859"), // [fg]
-		gqr.QRType_TIMING:   ParseFromHex("#000000"), // [fg]
-	}
 )
 
 // ParseFromHex convert hex string into color.RGBA

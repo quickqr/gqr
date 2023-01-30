@@ -13,11 +13,11 @@ const logoSizeRatio float64 = 0.2
 
 // Exporter exports gqr.Matrix to image.Image
 type Exporter struct {
-	options *imageOptions
+	options *exportOptions
 }
 
 // NewExporter creates new Exporter. (see DefaultImageOptions)
-func NewExporter(opts ...ImageOption) Exporter {
+func NewExporter(opts ...ExportOption) Exporter {
 	dst := DefaultImageOptions
 
 	for _, opt := range opts {
