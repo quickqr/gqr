@@ -26,7 +26,7 @@ func main() {
 	// Export QR code to image
 	img := export.NewExporter(
 		export.WithBgColorHex("#1f1f1f"),
-		export.WithGradient(export.GradientDirectionTLBR,
+		export.WithGradient(export.GradientDirectionLTR,
 			export.ParseFromHex("#00d4ff"),
 			export.ParseFromHex("#3037ad"),
 		),

@@ -73,7 +73,7 @@ func main() {
             export.WithQuietZone(30),
 
             // Gradient for foreground with direction from Top Right to Bottom Left
-            export.WithGradient(export.GradientDirectionTRBL,
+            export.WithGradient(export.GradientDirectionRTL,
               export.ParseFromHex("#cc33ff"),
               export.ParseFromHex("#ff9900"),
               // You also can use any color.Color instance
