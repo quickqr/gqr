@@ -24,8 +24,6 @@ Features marked with `*` are inherited from `go-qrcode`
 # Install
 ```bash
 go get -u github.com/quickqr/gqr
-# if you need exporting to images, run this:
-go get -u github.com/quickqr/gqr/export/image
 ```
 
 # Using
