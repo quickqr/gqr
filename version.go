@@ -29,10 +29,9 @@ const (
 
 var (
 	errInvalidErrorCorrectionLevel = errors.New("invalid error correction level")
-	errAnalyzeVersionFailed        = errors.New("could not match version! " +
-		"check your content length is in limitation of encode mode and error correction level")
-	errMissMatchedVersion    = errors.New("could not match version")
-	errMissMatchedEncodeType = errors.New("could not match the encode type")
+	errAnalyzeVersionFailed        = errors.New("could not fit supplied content with given error correction level and code version")
+	errMissMatchedVersion          = errors.New("could not match version")
+	errMissMatchedEncodeType       = errors.New("could not match the encode type")
 	// versions                 []version
 	// Each QR Code contains a 15-bit Format Information qrbool.  The 15 bits
 	// consist of 5 data bits concatenated with 10 error correction bits.
