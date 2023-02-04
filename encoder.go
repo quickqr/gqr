@@ -12,7 +12,7 @@ import (
 type encMode uint
 
 const (
-	// a qrbool of EncModeAuto will trigger a detection of the letter set from the input data,
+	// a qrbool of EncModeAuto will trigger a detection of the letter Set from the input data,
 	EncModeAuto = 0
 	// EncModeNone mode ...
 	EncModeNone encMode = 1 << iota
@@ -284,16 +284,16 @@ func encodeAlphanumericCharacter(v byte) uint32 {
 }
 
 // analyzeEncFunc returns true is current byte matched in current mode,
-// otherwise means you should use a bigger character set to check.
+// otherwise means you should use a bigger character Set to check.
 type analyzeEncFunc func(byte) bool
 
-// analyzeEncodeModeFromRaw try to detect letter set of input data,
+// analyzeEncodeModeFromRaw try to detect letter Set of input data,
 // so that encoder can determine which mode should be use.
 // reference: https://en.wikipedia.org/wiki/QR_code
 //
 // case1: only numbers, use EncModeNumeric.
 // case2: could not use EncModeNumeric, but you can find all of them in character mapping, use EncModeAlphanumeric.
-// case3: could not use EncModeAlphanumeric, but you can find all of them in ISO-8859-1 character set, use EncModeByte.
+// case3: could not use EncModeAlphanumeric, but you can find all of them in ISO-8859-1 character Set, use EncModeByte.
 // case4: could not use EncModeByte, use EncModeJP, no more choice.
 func analyzeEncodeModeFromRaw(raw []byte) encMode {
 	analyzeFnMapping := map[encMode]analyzeEncFunc{

@@ -26,8 +26,8 @@ func main() {
 			export.WithFgColor(color.White),
 			export.WithQuietZone(100),
 			// Works better with rounded module shapes
-			export.WithModuleGap(0.1),
-			export.WithModuleShape(shapes.RoundedModuleShape(0.2)),
+			export.WithModuleGap(0.4),
+			export.WithModuleShape(shapes.RoundedModuleShape(0.2, false)),
 		).
 		Export(*qr)
 

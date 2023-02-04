@@ -10,10 +10,10 @@ func TestMatrix(t *testing.T) {
 	m := newMatrix(3, 3)
 	m.print()
 
-	err := m.set(2, 4, QRValue_DATA_V1)
+	err := m.Set(2, 4, QRValue_DATA_V1)
 	assert.Error(t, err)
 
-	err = m.set(2, 2, QRValue_DATA_V1)
+	err = m.Set(2, 2, QRValue_DATA_V1)
 	assert.NoError(t, err)
 
 	v, err2 := m.at(2, 2)
@@ -30,16 +30,16 @@ func TestMatrix_Copy(t *testing.T) {
 		m1 = newMatrix(3, 3)
 		m2 = newMatrix(3, 3)
 	)
-	_ = m1.set(1, 1, QRValue_DATA_V0)
-	_ = m1.set(0, 0, QRValue_DATA_V0)
-	_ = m2.set(1, 1, QRValue_DATA_V0)
-	_ = m2.set(0, 0, QRValue_DATA_V0)
+	_ = m1.Set(1, 1, QRValue_DATA_V0)
+	_ = m1.Set(0, 0, QRValue_DATA_V0)
+	_ = m2.Set(1, 1, QRValue_DATA_V0)
+	_ = m2.Set(0, 0, QRValue_DATA_V0)
 
 	// do copy
 	got := m1.Copy()
 
 	// change origin
-	_ = m1.set(2, 2, QRValue_DATA_V1)
+	_ = m1.Set(2, 2, QRValue_DATA_V1)
 	assert.Equal(t, m2, got)
 
 	s, err := m1.at(2, 2)
@@ -98,7 +98,7 @@ func Benchmark_Iterate(b *testing.B) {
 	m := newMatrix(size, size)
 	for i := 0; i < size; i++ {
 		for j := 0; j < size; j++ {
-			_ = m.set(i, j, QRValue_DATA_V1)
+			_ = m.Set(i, j, QRValue_DATA_V1)
 		}
 	}
 	b.ResetTimer()
@@ -117,8 +117,8 @@ func Benchmark_Iterate(b *testing.B) {
 func Test_Matrix_RowAndCol(t *testing.T) {
 	m := newMatrix(3, 3)
 	for i := 0; i < 3; i++ {
-		_ = m.set(i, 0, QRValue_DATA_V1)
-		_ = m.set(i, i, QRValue_DATA_V1)
+		_ = m.Set(i, 0, QRValue_DATA_V1)
+		_ = m.Set(i, i, QRValue_DATA_V1)
 	}
 
 	// 1 1 1

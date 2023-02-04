@@ -52,10 +52,10 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 
 		imageWidth := int(containerWidth)
 		if o.spaceAroundLogo {
-			imageWidth = int(containerWidth * 0.9)
+			imageWidth = int(containerWidth * 0.8)
 		}
 
-		scaled := imgkit.Scale(o.logo, image.Rect(0, 0, imageWidth, imageWidth), nil)
+		scaled := imgkit.Scale(o.logo, image.Rect(0, 0, imageWidth, imageWidth), draw.ApproxBiLinear)
 		dc.DrawImage(scaled, (o.size-imageWidth)/2, (o.size-imageWidth)/2)
 	}
 
@@ -112,6 +112,13 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 		dc.SetColor(e.options.foregroundColor)
 	}
 
+	// Unset modules that are behind logo
+	for y := emptyZone.Min.Y; y <= emptyZone.Max.Y; y = y + ctx.ModSize {
+		for x := emptyZone.Min.X; x <= emptyZone.Max.X; x += ctx.ModSize {
+			_ = mat.Set(x/modSize, y/modSize, gqr.QRValue_DATA_V0)
+		}
+	}
+
 	// iterate the matrix to Draw each pixel
 	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
 		// Finders are drawn separately
@@ -119,20 +126,19 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 			return
 		}
 
-		ctx.X = float64(x*ctx.ModSize) + ctx.Gap/2
-		ctx.Y = float64(y*ctx.ModSize) + ctx.Gap/2
+		ctx.X = float64(x * ctx.ModSize)
+		ctx.Y = float64(y * ctx.ModSize)
 
-		if e.options.spaceAroundLogo && !emptyZone.Empty() {
-			x = int(ctx.X)
-			y = int(ctx.Y)
-
-			if image.Rect(x, y, x+modSize, y+modSize).Overlaps(emptyZone) {
-				return
+		if e.options.moduleDrawer.NeedsNeighbours {
+			ctx.Neighbours = &shapes.ModuleNeighbours{
+				N: mat.ValueAtClamped(x, y-1).IsSet(),
+				S: mat.ValueAtClamped(x, y+1).IsSet(),
+				W: mat.ValueAtClamped(x-1, y).IsSet(),
+				E: mat.ValueAtClamped(x+1, y).IsSet(),
 			}
-
 		}
 
-		e.options.drawModuleFn(ctx)
+		e.options.moduleDrawer.Draw(ctx)
 	})
 	// Draw modules to screen
 	dc.Fill()
@@ -159,17 +165,17 @@ func (e *Exporter) getEmptyZone(qrSize int) image.Rectangle {
 func (e *Exporter) drawFinders(dc *gg.Context, modSize float64, gap float64) {
 	finderSize := modSize * gqr.FINDER_SIZE
 	modSize -= gap
-	// This will not draw second WhiteSpace and cut a "hole" of specified shape inside drawFinder.Outer
+	// This will not draw second WhiteSpace and cut a "hole" of specified shape inside finderDrawer.Outer
 	dc.SetFillRuleEvenOdd()
 
 	// Placing outer shapes
-	placeFinderShapes(dc, e.options.drawFinder.Outer, finderSize, modSize, 0)
+	placeFinderShapes(dc, e.options.finderDrawer.Outer, finderSize, modSize, 0)
 
 	// Placing space between outer and inner shapes
-	placeFinderShapes(dc, e.options.drawFinder.WhiteSpace, finderSize-modSize*2, modSize, modSize)
+	placeFinderShapes(dc, e.options.finderDrawer.WhiteSpace, finderSize-modSize*2, modSize, modSize)
 
 	innerSize := finderSize / 2
-	placeFinderShapes(dc, e.options.drawFinder.Inner, innerSize, modSize, (finderSize-innerSize)/2)
+	placeFinderShapes(dc, e.options.finderDrawer.Inner, innerSize, modSize, (finderSize-innerSize)/2)
 
 	dc.Fill()
 }

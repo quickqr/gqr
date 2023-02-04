@@ -21,7 +21,8 @@ func main() {
 
 	finderDrawer := shapes.SquareFinderShape()
 	finderDrawer.Inner = innerPolygon
-	moduleDrawer := drawModule
+	moduleDrawer := shapes.SquareModuleShape()
+	moduleDrawer.Draw = drawModule
 
 	// Export QR code to image
 	img := export.NewExporter(
@@ -30,6 +31,7 @@ func main() {
 			export.ParseFromHex("#00d4ff"),
 			export.ParseFromHex("#3037ad"),
 		),
+		export.WithModuleGap(0.3),
 		export.WithFinderShape(finderDrawer),
 		export.WithModuleShape(moduleDrawer),
 	).
@@ -49,6 +51,6 @@ func drawModule(ctx *shapes.ModuleDrawContext) {
 	ctx.DrawRegularPolygon(6, ctx.X+rad, ctx.Y+rad, rad, 90)
 }
 
-func innerPolygon(dc *gg.Context, x, y, size, modSize float64) {
+func innerPolygon(dc *gg.Context, x, y, size, _ float64) {
 	dc.DrawRegularPolygon(6, x+size/2, y+size/2, size/2, 0)
 }

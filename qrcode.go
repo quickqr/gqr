@@ -344,7 +344,7 @@ func addFinder(m *Matrix, top, left int) {
 	// black outer
 	x, y := top, left
 	for i := 0; i < 24; i++ {
-		_ = m.set(x, y, QRValue_FINDER_V1)
+		_ = m.Set(x, y, QRValue_FINDER_V1)
 		if i < 6 {
 			x = x + 1
 		} else if i < 12 {
@@ -359,7 +359,7 @@ func addFinder(m *Matrix, top, left int) {
 	// white inner
 	x, y = top+1, left+1
 	for i := 0; i < 16; i++ {
-		_ = m.set(x, y, QRValue_FINDER_V0)
+		_ = m.Set(x, y, QRValue_FINDER_V0)
 		if i < 4 {
 			x = x + 1
 		} else if i < 8 {
@@ -374,7 +374,7 @@ func addFinder(m *Matrix, top, left int) {
 	// black inner
 	for x = left + 2; x < left+5; x++ {
 		for y = top + 2; y < top+5; y++ {
-			_ = m.set(x, y, QRValue_FINDER_V1)
+			_ = m.Set(x, y, QRValue_FINDER_V1)
 		}
 	}
 }
@@ -384,8 +384,8 @@ func addSplitter(m *Matrix, x, y, dimension int) {
 	// top-left
 	if x == 7 && y == 7 {
 		for pos := 0; pos < 8; pos++ {
-			_ = m.set(x, pos, QRValue_SPLITTER_V0)
-			_ = m.set(pos, y, QRValue_SPLITTER_V0)
+			_ = m.Set(x, pos, QRValue_SPLITTER_V0)
+			_ = m.Set(pos, y, QRValue_SPLITTER_V0)
 		}
 		return
 	}
@@ -393,8 +393,8 @@ func addSplitter(m *Matrix, x, y, dimension int) {
 	// top-right
 	if x == dimension-8 && y == 7 {
 		for pos := 0; pos < 8; pos++ {
-			_ = m.set(x, y-pos, QRValue_SPLITTER_V0)
-			_ = m.set(x+pos, y, QRValue_SPLITTER_V0)
+			_ = m.Set(x, y-pos, QRValue_SPLITTER_V0)
+			_ = m.Set(x+pos, y, QRValue_SPLITTER_V0)
 		}
 		return
 	}
@@ -402,8 +402,8 @@ func addSplitter(m *Matrix, x, y, dimension int) {
 	// bottom-left
 	if x == 7 && y == dimension-8 {
 		for pos := 0; pos < 8; pos++ {
-			_ = m.set(x, y+pos, QRValue_SPLITTER_V0)
-			_ = m.set(x-pos, y, QRValue_SPLITTER_V0)
+			_ = m.Set(x, y+pos, QRValue_SPLITTER_V0)
+			_ = m.Set(x-pos, y, QRValue_SPLITTER_V0)
 		}
 		return
 	}
@@ -412,11 +412,11 @@ func addSplitter(m *Matrix, x, y, dimension int) {
 
 // add matrix align module
 func addAlignment(m *Matrix, centerX, centerY int) {
-	_ = m.set(centerX, centerY, QRValue_DATA_V1)
+	_ = m.Set(centerX, centerY, QRValue_DATA_V1)
 	// black
 	x, y := centerX-2, centerY-2
 	for i := 0; i < 16; i++ {
-		_ = m.set(x, y, QRValue_DATA_V1)
+		_ = m.Set(x, y, QRValue_DATA_V1)
 		if i < 4 {
 			x = x + 1
 		} else if i < 8 {
@@ -430,7 +430,7 @@ func addAlignment(m *Matrix, centerX, centerY int) {
 	// white
 	x, y = centerX-1, centerY-1
 	for i := 0; i < 8; i++ {
-		_ = m.set(x, y, QRValue_DATA_V0)
+		_ = m.Set(x, y, QRValue_DATA_V0)
 		if i < 2 {
 			x = x + 1
 		} else if i < 4 {
@@ -447,18 +447,18 @@ func addAlignment(m *Matrix, centerX, centerY int) {
 func addTimingLine(m *Matrix, dimension int) {
 	for pos := 8; pos < dimension-8; pos++ {
 		if pos%2 == 0 {
-			_ = m.set(6, pos, QRValue_TIMING_V1)
-			_ = m.set(pos, 6, QRValue_TIMING_V1)
+			_ = m.Set(6, pos, QRValue_TIMING_V1)
+			_ = m.Set(pos, 6, QRValue_TIMING_V1)
 		} else {
-			_ = m.set(6, pos, QRValue_TIMING_V0)
-			_ = m.set(pos, 6, QRValue_TIMING_V0)
+			_ = m.Set(6, pos, QRValue_TIMING_V0)
+			_ = m.Set(pos, 6, QRValue_TIMING_V0)
 		}
 	}
 }
 
 // addDarkBlock ...
 func addDarkBlock(m *Matrix, x, y int) {
-	_ = m.set(x, y, QRValue_DARK_V1)
+	_ = m.Set(x, y, QRValue_DARK_V1)
 }
 
 // reserveFormatBlock maintain the position in matrix for format info
@@ -466,26 +466,26 @@ func reserveFormatBlock(m *Matrix, dimension int) {
 	for pos := 1; pos < 9; pos++ {
 		// skip timing line
 		if pos == 6 {
-			_ = m.set(8, dimension-pos, QRValue_FORMAT_V0)
-			_ = m.set(dimension-pos, 8, QRValue_FORMAT_V0)
+			_ = m.Set(8, dimension-pos, QRValue_FORMAT_V0)
+			_ = m.Set(dimension-pos, 8, QRValue_FORMAT_V0)
 			continue
 		}
 		// skip dark module
 		if pos == 8 {
-			_ = m.set(8, pos, QRValue_FORMAT_V0)           // top-left-column
-			_ = m.set(pos, 8, QRValue_FORMAT_V0)           // top-left-row
-			_ = m.set(dimension-pos, 8, QRValue_FORMAT_V0) // top-right-row
+			_ = m.Set(8, pos, QRValue_FORMAT_V0)           // top-left-column
+			_ = m.Set(pos, 8, QRValue_FORMAT_V0)           // top-left-row
+			_ = m.Set(dimension-pos, 8, QRValue_FORMAT_V0) // top-right-row
 			continue
 		}
-		_ = m.set(8, pos, QRValue_FORMAT_V0)           // top-left-column
-		_ = m.set(pos, 8, QRValue_FORMAT_V0)           // top-left-row
-		_ = m.set(dimension-pos, 8, QRValue_FORMAT_V0) // top-right-row
-		_ = m.set(8, dimension-pos, QRValue_FORMAT_V0) // bottom-left-column
+		_ = m.Set(8, pos, QRValue_FORMAT_V0)           // top-left-column
+		_ = m.Set(pos, 8, QRValue_FORMAT_V0)           // top-left-row
+		_ = m.Set(dimension-pos, 8, QRValue_FORMAT_V0) // top-right-row
+		_ = m.Set(8, dimension-pos, QRValue_FORMAT_V0) // bottom-left-column
 	}
 
 	// fix(@yeqown): b4b5ae3 reduced two format reversed blocks on top-left-column and top-left-row.
-	_ = m.set(0, 8, QRValue_FORMAT_V0)
-	_ = m.set(8, 0, QRValue_FORMAT_V0)
+	_ = m.Set(0, 8, QRValue_FORMAT_V0)
+	_ = m.Set(8, 0, QRValue_FORMAT_V0)
 }
 
 // reserveVersionBlock maintain the position in matrix for version info
@@ -493,8 +493,8 @@ func reserveVersionBlock(m *Matrix, dimension int) {
 	// 3x6=18 cells
 	for i := 1; i <= 3; i++ {
 		for pos := 0; pos < 6; pos++ {
-			_ = m.set(dimension-8-i, pos, QRValue_VERSION_V0)
-			_ = m.set(pos, dimension-8-i, QRValue_VERSION_V0)
+			_ = m.Set(dimension-8-i, pos, QRValue_VERSION_V0)
+			_ = m.Set(pos, dimension-8-i, QRValue_VERSION_V0)
 		}
 	}
 }
@@ -542,11 +542,11 @@ func (q *qrcode) fillDataBinary(m *Matrix, dimension int) {
 			}
 		}
 
-		// data bit should only be set into un-set block in matrix.
+		// data bit should only be Set into un-Set block in matrix.
 		if state.qrtype() == QRType_INIT {
-			_ = m.set(x, y, set)
+			_ = m.Set(x, y, set)
 			pos++
-			debugLogf("normal set turn forward: upForward: %v, x: %d, y: %d", upForward, x, y)
+			debugLogf("normal Set turn forward: upForward: %v, x: %d, y: %d", upForward, x, y)
 		}
 
 		// DO NOT CHANGE FOLLOWING CODE FOR NOW !!!
@@ -657,7 +657,7 @@ func (q *qrcode) xorMask(m *Matrix, mask *mask) {
 			return
 		}
 		v2, _ := m.at(x, y)
-		_ = m.set(x, y, v2.xor(v))
+		_ = m.Set(x, y, v2.xor(v))
 	})
 }
 
@@ -671,11 +671,11 @@ func (q *qrcode) fillVersionInfo(m *Matrix, dimension int) {
 	for j := 5; j >= 0; j-- {
 		for i := 1; i <= 3; i++ {
 			if bin.At(pos) {
-				_ = m.set(dimension-8-i, j, QRValue_VERSION_V1)
-				_ = m.set(j, dimension-8-i, QRValue_VERSION_V1)
+				_ = m.Set(dimension-8-i, j, QRValue_VERSION_V1)
+				_ = m.Set(j, dimension-8-i, QRValue_VERSION_V1)
 			} else {
-				_ = m.set(dimension-8-i, j, QRValue_VERSION_V0)
-				_ = m.set(j, dimension-8-i, QRValue_VERSION_V0)
+				_ = m.Set(dimension-8-i, j, QRValue_VERSION_V0)
+				_ = m.Set(j, dimension-8-i, QRValue_VERSION_V0)
 			}
 
 			pos++
@@ -695,14 +695,14 @@ func (q *qrcode) fillFormatInfo(m *Matrix, mode maskPatternModulo, dimension int
 	for pos := 0; pos < 15; pos++ {
 		if fmtBSet.At(pos) {
 			// row
-			_ = m.set(x, 8, QRValue_FORMAT_V1)
+			_ = m.Set(x, 8, QRValue_FORMAT_V1)
 			// column
-			_ = m.set(8, y, QRValue_FORMAT_V1)
+			_ = m.Set(8, y, QRValue_FORMAT_V1)
 		} else {
 			// row
-			_ = m.set(x, 8, QRValue_FORMAT_V0)
+			_ = m.Set(x, 8, QRValue_FORMAT_V0)
 			// column
-			_ = m.set(8, y, QRValue_FORMAT_V0)
+			_ = m.Set(8, y, QRValue_FORMAT_V0)
 		}
 
 		x = x + 1

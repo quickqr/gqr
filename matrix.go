@@ -84,8 +84,8 @@ func (m *Matrix) Height() int {
 	return m.height
 }
 
-// set [w][h] as true
-func (m *Matrix) set(w, h int, c qrvalue) error {
+// Set [w][h] as true
+func (m *Matrix) Set(w, h int, c qrvalue) error {
 	if w >= m.width || w < 0 {
 		return ErrorOutRangeOfW
 	}
@@ -94,6 +94,12 @@ func (m *Matrix) set(w, h int, c qrvalue) error {
 	}
 	m.mat[w][h] = c
 	return nil
+}
+
+func (m *Matrix) ValueAtClamped(w, h int) QRValue {
+	v, _ := m.at(w, h)
+
+	return v
 }
 
 // at state qrvalue from matrix with position {x, y}

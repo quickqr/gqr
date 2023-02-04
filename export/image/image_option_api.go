@@ -107,7 +107,7 @@ func WithQuietZone(size int) ExportOption {
 // See: shapes.SquareModuleShape, shapes.RoundedModuleShape.
 func WithModuleShape(drawer shapes.ModuleDrawer) ExportOption {
 	return newFuncOption(func(oo *exportOptions) {
-		oo.drawModuleFn = drawer
+		oo.moduleDrawer = drawer
 	})
 }
 
@@ -115,7 +115,7 @@ func WithModuleShape(drawer shapes.ModuleDrawer) ExportOption {
 // See: shapes.SquareFinderShape, shapes.RoundedFinderShape.
 func WithFinderShape(c shapes.FinderDrawConfig) ExportOption {
 	return newFuncOption(func(oo *exportOptions) {
-		oo.drawFinder = c
+		oo.finderDrawer = c
 	})
 }
 

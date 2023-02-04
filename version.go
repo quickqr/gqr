@@ -192,7 +192,7 @@ func (v version) formatInfo(maskPattern int) *binary.Binary {
 var emptyVersion = version{Ver: -1}
 
 // binarySearchVersion speed up searching target version in versions.
-// low, high to set the left and right bound of the search range (min:0 to max:159).
+// low, high to Set the left and right bound of the search range (min:0 to max:159).
 // compare represents the function to compare the target version with the cursor version.
 // negative means lower direction, positive means higher direction, zero mean hit.
 func binarySearchVersion(low, high int, compare func(*version) int) (hit version, found bool) {

@@ -20,8 +20,8 @@ var DefaultImageOptions = exportOptions{
 	size:            512,
 	quietZone:       30,
 	moduleGap:       0,
-	drawModuleFn:    shapes.SquareModuleShape(),
-	drawFinder:      shapes.SquareFinderShape(),
+	moduleDrawer:    shapes.SquareModuleShape(),
+	finderDrawer:    shapes.SquareFinderShape(),
 }
 
 type GradientDirection = int
@@ -74,8 +74,8 @@ type exportOptions struct {
 	moduleGap float64
 
 	// TODO: Add better support of customization with single context (all colors, gaps, etc.) for both module and finders drawers
-	drawModuleFn shapes.ModuleDrawer
-	drawFinder   shapes.FinderDrawConfig
+	moduleDrawer shapes.ModuleDrawer
+	finderDrawer shapes.FinderDrawConfig
 
 	// TODO
 	// halftoneImg is the halftone image for the output image.

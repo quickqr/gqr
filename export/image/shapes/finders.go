@@ -6,8 +6,8 @@ import (
 
 // FinderShapeDrawer is general function for drawing finder shapes
 //
-// This function should draw any shape with top left corned on cords x and y with supplied size.
-// FinderShapeDrawer should only draw a path, but not fill anything, as it's done when calling this function
+// This function should Draw any shape with top left corned on cords x and y with supplied size.
+// FinderShapeDrawer should only Draw a path, but not fill anything, as it's done when calling this function
 type FinderShapeDrawer = func(ctx *gg.Context, x float64, y float64, size float64, modSize float64)
 
 // FinderDrawConfig contains 3 FinderShapeDrawer functions, this allows to customize look of the inner and outer borders.

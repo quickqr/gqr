@@ -78,13 +78,13 @@ func (m *mask) masking() {
 	m.mat.iter(IterDirection_COLUMN, func(x, y int, s qrvalue) {
 		// skip the function modules
 		if v, _ := m.mat.at(x, y); v.qrtype() != QRType_INIT {
-			_ = m.mat.set(x, y, QRValue_INIT_V0)
+			_ = m.mat.Set(x, y, QRValue_INIT_V0)
 			return
 		}
 		if moduloFn(x, y) {
-			_ = m.mat.set(x, y, QRValue_DATA_V1)
+			_ = m.mat.Set(x, y, QRValue_DATA_V1)
 		} else {
-			_ = m.mat.set(x, y, QRValue_DATA_V0)
+			_ = m.mat.Set(x, y, QRValue_DATA_V0)
 		}
 	})
 }
