@@ -10,7 +10,10 @@ Features marked with `*` are inherited from `go-qrcode`
 - [X] Automatically analyze QR version by source text `*`
 - [X] Applying image size with `WithImageSize`
 - [X] Applying padding for QR code with `WithQuietZone`
-- [X] Full customization of shapes for modules and finders with `WithModuleShape` and `WithFinderShape`
+- [X] Full customization of shapes:  
+  - [X] Customize modules with `WithModuleShape`  
+  - [X] Customize finders (eyes) with `WithFinderShape`
+  - [X] "Connected" rounded modules with go gaps between
 - [X] Setting colors `*`: `WithBgColor(Hex)`, `WithFgColor(Hex)`
   - [X] Added support for hex colors with alpha channel (8 digits)
   - [X] Gradient with customizable direction via `WithGradient(dir, colors...)`.  
