@@ -57,15 +57,21 @@ func RoundedModuleShape(borderRadius float64, connected bool) ModuleDrawer {
 			NeedsNeighbours: true,
 			Draw: func(ctx *ModuleDrawContext) {
 				size := float64(ctx.ModSize)
-				//halfGap := ctx.Gap / 2
+				n := ctx.Neighbours
 
-				if ctx.Neighbours != nil {
-					ctx.drawConnectedRect(ctx.X, ctx.Y, size, size, size*borderRadius)
-					return
-				}
-
-				size -= ctx.Gap
-				ctx.DrawRoundedRectangle(ctx.X+ctx.Gap/2, ctx.Y+ctx.Gap/2, size, size, size*borderRadius)
+				ctx.drawRoundedWithSquareCorners(
+					ctx.X, ctx.Y, size, size, size*borderRadius,
+					[4]bool{
+						// Top right
+						n.N || n.E,
+						// Bottom right
+						n.E || n.S,
+						// Bottom left
+						n.S || n.W,
+						// Top left
+						n.W || n.N,
+					},
+				)
 			},
 		}
 	}
@@ -79,9 +85,50 @@ func RoundedModuleShape(borderRadius float64, connected bool) ModuleDrawer {
 	}
 }
 
-// TODO: Find a way to refactor
-func (ctx *ModuleDrawContext) drawConnectedRect(x, y, w, h, r float64) {
-	n := ctx.Neighbours
+func LineModuleShape(borderRadius float64, vertical bool) ModuleDrawer {
+	if borderRadius > 0.5 {
+		borderRadius = 0.5
+	}
+	if borderRadius < 0 {
+		borderRadius = 0
+	}
+
+	return ModuleDrawer{
+		NeedsNeighbours: true,
+		Draw: func(ctx *ModuleDrawContext) {
+			size := float64(ctx.ModSize)
+			// For applying gap on opposite direction (horizontal for vertical and vice versa)
+			gapSize := size - ctx.Gap
+			n := ctx.Neighbours
+
+			if vertical {
+				// Apply gap only on X axis (to pad rows)
+				ctx.drawRoundedWithSquareCorners(
+					ctx.X+ctx.Gap/2, ctx.Y, gapSize, size, gapSize*borderRadius,
+					[4]bool{
+						n.N, n.S, n.S, n.N,
+					},
+				)
+				return
+			}
+
+			// Apply gap only on Y axis (to pad lines)
+			ctx.drawRoundedWithSquareCorners(
+				ctx.X, ctx.Y+ctx.Gap/2, size, gapSize, gapSize*borderRadius,
+				[4]bool{
+					n.E, n.E, n.W, n.W,
+				},
+			)
+		},
+	}
+}
+
+// Fixme: Can it be refactored?
+
+// drawRoundedWithSquareCorners accept x and y position of rectangle, its width and height and the border radius for active corners
+//
+//	that are defined as true value in corners array, starting from top right corner and going clockwise
+func (ctx *ModuleDrawContext) drawRoundedWithSquareCorners(x, y, w, h, r float64, squaredCorners [4]bool) {
 	left, edgeLeft, edgeRight, right := x, x+r, x+w-r, x+w
 	top, edgeTop, edgeBottom, bottom := y, y+r, y+h-r, y+h
 
@@ -90,7 +137,7 @@ func (ctx *ModuleDrawContext) drawConnectedRect(x, y, w, h, r float64) {
 
 	// Top & top right corner
 	ctx.LineTo(edgeRight, top)
-	if n.N || n.E {
+	if squaredCorners[0] {
 		ctx.LineTo(right, top)
 		ctx.LineTo(right, edgeTop)
 	} else {
@@ -99,7 +146,7 @@ func (ctx *ModuleDrawContext) drawConnectedRect(x, y, w, h, r float64) {
 
 	// Right & bottom right corner
 	ctx.LineTo(right, edgeBottom)
-	if n.S || n.E {
+	if squaredCorners[1] {
 		ctx.LineTo(right, bottom)
 		ctx.LineTo(edgeRight, bottom)
 	} else {
@@ -108,7 +155,7 @@ func (ctx *ModuleDrawContext) drawConnectedRect(x, y, w, h, r float64) {
 
 	// Bottom & bottom right corner
 	ctx.LineTo(edgeLeft, bottom)
-	if n.S || n.W {
+	if squaredCorners[2] {
 		ctx.LineTo(left, bottom)
 		ctx.LineTo(left, edgeBottom)
 	} else {
@@ -117,7 +164,7 @@ func (ctx *ModuleDrawContext) drawConnectedRect(x, y, w, h, r float64) {
 
 	// Left & top left corner
 	ctx.LineTo(left, edgeTop)
-	if n.N || n.W {
+	if squaredCorners[3] {
 		ctx.LineTo(left, top)
 		ctx.LineTo(edgeLeft, top)
 	} else {
