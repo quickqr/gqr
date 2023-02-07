@@ -25,7 +25,7 @@ func main() {
 	// Export QR code to image
 	img := export.
 		NewExporter(
-			export.WithBgColorHex("#1f1f1f"),
+			export.WithBgColorHex("#1F1339"),
 
 			export.WithLogo(logo),
 			export.WithSpaceAroundLogo(),
@@ -37,9 +37,9 @@ func main() {
 			export.WithQuietZone(60),
 			export.WithModuleGap(0.3),
 
-			export.WithGradient(export.GradientDirectionLTR,
-				export.ParseFromHex("#cc33ff"),
-				export.ParseFromHex("#ff9900"),
+			export.WithGradient(export.GradientDirectionRTL,
+				export.ParseFromHex("#FF7439"),
+				export.ParseFromHex("#FF3352"),
 				// You also can use any color.Color instance
 			),
 		).
