@@ -7,9 +7,18 @@ import (
 	"github.com/quickqr/gqr/export/image/shapes"
 	"golang.org/x/image/draw"
 	"image"
+	"math"
 )
 
 const logoSizeRatio float64 = 0.2
+
+// conditionalRound performs a/b division and rounds up only if fraction part is more than bound
+func conditionalRound(a float64, floor bool) float64 {
+	if floor {
+		return math.Floor(a)
+	}
+	return math.Ceil(a)
+}
 
 // Exporter exports gqr.Matrix to image.Image
 type Exporter struct {
@@ -44,18 +53,16 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 	qr := e.drawQR(&mat, actualSize)
 	dc.DrawImage(qr, o.quietZone, o.quietZone)
 
-	// Fixme: pieces of modules can be seen behind space container
-	// TODO: find way to hide modules that are hidden by white space more than 80-90% (
 	if o.logo != nil {
 		// rescale logo relative to size of the QR code
-		containerWidth := float64(actualSize) * logoSizeRatio
+		containerWidth := int(float64(actualSize) * logoSizeRatio)
 
 		imageWidth := int(containerWidth)
 		if o.spaceAroundLogo {
-			imageWidth = int(containerWidth * 0.8)
+			imageWidth = int(float64(containerWidth) * 0.8)
 		}
 
-		scaled := imgkit.Scale(o.logo, image.Rect(0, 0, imageWidth, imageWidth), draw.ApproxBiLinear)
+		scaled := imgkit.Scale(o.logo, image.Rect(0, 0, imageWidth, imageWidth), nil)
 		dc.DrawImage(scaled, (o.size-imageWidth)/2, (o.size-imageWidth)/2)
 	}
 
@@ -76,7 +83,7 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 	size := modSize * mat.Width()
 	// Apply gaps after real image size was calculated
 	gap := float64(modSize) * e.options.moduleGap
-	var emptyZone = e.getEmptyZone(size)
+	e.clearEmptyZone(mat, size, modSize)
 
 	dc := gg.NewContext(size, size)
 
@@ -112,13 +119,6 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 		dc.SetColor(e.options.foregroundColor)
 	}
 
-	// Unset modules that are behind logo
-	for y := emptyZone.Min.Y; y <= emptyZone.Max.Y; y = y + ctx.ModSize {
-		for x := emptyZone.Min.X; x <= emptyZone.Max.X; x += ctx.ModSize {
-			_ = mat.Set(x/modSize, y/modSize, gqr.QRValue_DATA_V0)
-		}
-	}
-
 	// iterate the matrix to Draw each pixel
 	mat.Iterate(gqr.IterDirection_ROW, func(x int, y int, v gqr.QRValue) {
 		// Finders are drawn separately
@@ -148,11 +148,34 @@ func (e *Exporter) drawQR(mat *gqr.Matrix, requiredSize int) image.Image {
 	return imgkit.Scale(dc.Image(), image.Rect(0, 0, requiredSize, requiredSize), draw.ApproxBiLinear)
 }
 
-func (e *Exporter) getEmptyZone(qrSize int) image.Rectangle {
+// clearEmptyZone finds modules that intersect with logo container and hide them by unsetting
+func (e *Exporter) clearEmptyZone(mat *gqr.Matrix, imageSize, modSize int) {
+	if !e.options.spaceAroundLogo {
+		return
+	}
+
+	emptyZone := e.getEmptyZone(imageSize)
+	min := emptyZone.Min.X / modSize
+	max := (emptyZone.Max.X + modSize - 1) / modSize
+
+	for x := min; x <= max; x++ {
+		for y := min; y <= max; y++ {
+			xRect := x * modSize
+			yRect := y * modSize
+
+			if image.Rect(xRect, yRect, xRect+modSize, yRect+modSize).Overlaps(emptyZone) {
+				_ = mat.Set(x, y, gqr.QRValue_DATA_V0)
+			}
+
+		}
+	}
+}
+
+func (e *Exporter) getEmptyZone(imageSize int) image.Rectangle {
 	if e.options.logo != nil && e.options.spaceAroundLogo {
-		center := qrSize / 2
+		center := imageSize / 2
 		// Get half of the empty zone size
-		halfSize := int(float64(qrSize) * logoSizeRatio / 2)
+		halfSize := int(float64(imageSize) * logoSizeRatio / 2)
 		start := center - halfSize
 		end := center + halfSize
 
