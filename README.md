@@ -88,7 +88,7 @@ func main() {
             // Note: actual QR code size will be (image size - quiet zone * 2)
             export.WithQuietZone(60),
 
-            // Gradient for foreground with direction from Top Right to Bottom Left
+            // Gradient for foreground with direction from Top Left to Bottom Right
             export.WithGradient(export.GradientDirectionLTR,
               export.ParseFromHex("#336FE1"),
               export.ParseFromHex("#2799C9"),
