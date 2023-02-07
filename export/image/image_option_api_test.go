@@ -79,3 +79,18 @@ func Test_WithQuietZoneSize(t *testing.T) {
 	WithQuietZone(50).apply(&oo)
 	assert.Equal(t, 50, oo.quietZone)
 }
+
+func Test_WithLogoScale(t *testing.T) {
+	oo := DefaultImageOptions
+
+	// Too small value
+	WithLogoScale(0.35).apply(&oo)
+	assert.Equal(t, DefaultImageOptions.logoScale, oo.logoScale)
+	// Too big value
+	WithLogoScale(1.25).apply(&oo)
+	assert.Equal(t, DefaultImageOptions.logoScale, oo.logoScale)
+
+	// Ok value
+	WithLogoScale(0.65).apply(&oo)
+	assert.Equal(t, 0.65, oo.logoScale)
+}

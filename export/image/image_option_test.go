@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+// TODO: test for ParseFromHex
+
 func Test_hexToRGBA(t *testing.T) {
 	type args struct {
 		s string

@@ -17,6 +17,7 @@ var DefaultImageOptions = exportOptions{
 	foregroundColor: color_BLACK, // black
 	gradientConfig:  nil,
 	logo:            nil,
+	logoScale:       0.8,
 	size:            512,
 	quietZone:       30,
 	moduleGap:       0,
@@ -62,6 +63,7 @@ type exportOptions struct {
 	// logo this icon image would be put the center of QR Code image
 	// TODO: Force color for container?
 	logo            image.Image
+	logoScale       float64
 	spaceAroundLogo bool
 
 	// size in pixel of output image

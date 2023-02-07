@@ -44,6 +44,8 @@ func main() {
 			export.WithModuleGap(0.1),
 			// Size of the outputted image in pixels
 			export.WithImageSize(1024),
+
+			export.WithLogoScale(0.8), // default
 			// Padding around QR code
 			// Note: actual QR code size will be (image size - quiet zone * 2)
 			export.WithQuietZone(60),

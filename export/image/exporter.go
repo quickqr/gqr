@@ -59,7 +59,7 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 
 		imageWidth := int(containerWidth)
 		if o.spaceAroundLogo {
-			imageWidth = int(float64(containerWidth) * 0.8)
+			imageWidth = int(float64(containerWidth) * o.logoScale)
 		}
 
 		scaled := imgkit.Scale(o.logo, image.Rect(0, 0, imageWidth, imageWidth), nil)
@@ -70,8 +70,6 @@ func (e Exporter) Export(mat gqr.Matrix) image.Image {
 }
 
 // TODO:
-// - Add custom shapes for modules and finders, draw finders after other modules were drawn
-// - Support for gradient (direction, set of colors)
 // - Reimplement halftones capability from the original library
 
 // drawQR draws pixel-perfect modules to avoid gaps between modules by ceiling width of module up and then

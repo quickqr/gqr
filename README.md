@@ -54,7 +54,7 @@ func main() {
     // These are defaults, can be omitted (as it is in other examples)
     gqr.WithErrorCorrectionLevel(gqr.ErrorCorrectionHighest),
     gqr.WithEncodingMode(gqr.EncModeAuto),
-    // Uncomment to force QR code version 23. 
+    // Uncomment to force QR code version 23.
     // Note: you might get an error if supplied length is more than capacity of a specified version
     // gqr.WithVersion(23)
   )
@@ -82,6 +82,8 @@ func main() {
             export.WithModuleGap(0.1),
             // Size of the outputted image in pixels
             export.WithImageSize(1024),
+
+            export.WithLogoScale(0.8),  // default
             // Padding around QR code
             // Note: actual QR code size will be (image size - quiet zone * 2)
             export.WithQuietZone(60),

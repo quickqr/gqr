@@ -76,6 +76,19 @@ func WithLogo(img image.Image) ExportOption {
 	})
 }
 
+// WithLogoScale allows to resize logo image relative to the space it clears if WithSpaceAroundLogo is applied.
+//
+//	Allowed values are from 0.5 to 1 (inclusively)
+func WithLogoScale(scale float64) ExportOption {
+	return newFuncOption(func(oo *exportOptions) {
+		if scale < 0.5 || scale > 1 {
+			return
+		}
+
+		oo.logoScale = scale
+	})
+}
+
 // WithSpaceAroundLogo adds empty space behind logo, so it's not drawn on top of modules
 func WithSpaceAroundLogo() ExportOption {
 	return newFuncOption(func(oo *exportOptions) {
